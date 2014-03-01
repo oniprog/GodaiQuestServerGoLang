@@ -1,0 +1,83 @@
+body {
+  padding: 50px;
+}
+
+h1 {
+    font-size:32pt;text-shadow: 1px 1px 2px #0000ff;
+    color: #c0c000;
+    border-style: none none none none;
+}
+
+.text {
+    font-family: monospace;
+}
+
+textarea {
+    tab-size:4;
+}
+
+h2 {
+    text-shadow: 1px 1px 1px #0000ff;
+    color: #c0c000;
+    border-style: none none solid;
+}
+
+.small {
+    font-size:12pt;
+}
+
+.box {
+    font-size:14pt;
+    padding:10px 10px;
+    border-style: inset;
+    background: #e0e0e0;
+}
+.box2 {
+    font-size:8pt;
+    padding:2px 2px;
+    border-style: inset;
+    background: #e0e0e0;
+}
+
+.hbox {
+    display:box;
+    box-orient:horizontal;
+}
+.dinline {
+    display:inline;
+}
+
+.monospace {
+    font-family: monospace;
+}
+
+.boxbox {
+    width: 400px;
+    height:200px;
+    margin: 0 0;
+    overflow-y: auto;
+    border: 1px solid #0f0;
+    padding: 2px;
+    text-align: justify;
+    background: transparent;
+}
+
+#loginbutton {
+    width:400px;
+}
+
+#error_message {
+    border-style: solid;
+    color : #ff0000;
+    width:520px;
+    padding:10px;
+}
+
+#loginbox {
+    border-style: solid;
+    width:530px;
+}
+
+#logout {
+    font-size:10pt;
+}

@@ -26,7 +26,31 @@ var mapTemplate = make(map[string]*template.Template)
 // '/' の処理
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 
-	mapTemplate["index"].Execute(w, nil)
+     data := make( map[string]string )
+
+     queries := r.URL.Query()
+     if len(queries["message"]) > 0 {
+        data["message"] = queries["message"][0]
+     }     
+     email := r.Form["email"]
+     password := r.Form["password"]
+
+     if len(email) > 0 && len(password) > 0 {
+        data["email"] = email[0]
+        data["password"] = password[0]
+     }     
+	 mapTemplate["index"].Execute(w, data)
+}
+
+// ログインの処理
+func loginHandler(w http.ResponseWriter, r *http.Request) {
+
+     if r.Method != "POST" {
+        http.Redirect( w, r, "/index", http.StatusMovedPermanently )
+        return
+     }
+
+    http.Redirect( w, r, "/index?message=ログインしました", http.StatusSeeOther )
 }
 
 // テンプレートのコンパイル処理
@@ -84,6 +108,11 @@ func main() {
 
 	// '/'の処理
 	r.HandleFunc("/", indexHandler)
+	r.HandleFunc("/index", indexHandler)
+
+    // 'login'の処理
+    r.HandleFunc("/login", loginHandler)
+
 	http.Handle("/", r)
 
     fmt.Printf("Server start : port 3001\n")

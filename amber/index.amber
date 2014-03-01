@@ -5,4 +5,14 @@ block title
 
 block content
   div
-    p some content   
+    h2 ログイン画面 &nbsp; &nbsp;
+      A.small[href="register_user"] 新規ユーザ登録
+    div#loginbox
+      form[name="login"][action="login"][method="post"]
+        p.monospace メールアドレス:
+          input[type="text"][name="email"][size="40"] #{email}
+        p.monospace パスワード : &nbsp; &nbsp; 
+          input[type="password"][name="password"][size="40"] #{password}
+        input[type="reset"]
+        input.loginbutton[type="submit", value="login"]
+      br

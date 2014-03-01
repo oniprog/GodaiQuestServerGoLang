@@ -1,12 +1,21 @@
 doctype 5
 html 
   head
-    link[rel="stylesheet"][herf="stylesheet/default.css"]
+    link[rel="stylesheet"][href="public/stylesheet/default.css"]
     script[type="text/javascript"][src="http://code.jquery.com/jquery-2.1.0.min.js"]
-    block title
+    title 
+      block title
   body
-    p parent
+    h1 GodaiQuest
+      span.small 　　　新感覚 情報共有 SNS &nbsp; &nbsp; 
+      a#logout[href="logout"] logout
+
+    if message
+      div
+        p#error_message #{message}
+
     block content
+    
     script
       var textareas = document.getElementsByTagName('textarea');
       var count = textareas.length;
