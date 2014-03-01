@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+    "path"
 	"github.com/eknkc/amber"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
@@ -56,6 +57,13 @@ func compileTemplate(path string, f os.FileInfo, err error) error {
 	return err
 }
 
+// ファイルを返すだけのハンドラ
+func fileHandler(w http.ResponseWriter, r *http.Request) {
+
+     fmt.Printf("%s\n", r.URL.Path[1:])
+     http.ServeFile(w, r, path.Join("public", r.URL.Path[1:]))
+}
+
 func main() {
 
 	// テンプレートの準備
@@ -70,6 +78,9 @@ func main() {
 	// ./public以下を静的コンテンツの置き場所にする
 	fileServer := http.FileServer(http.Dir("public"))
 	http.Handle("/public/", http.StripPrefix("/public/", fileServer))
+
+    // favicon.icoの処理
+    r.HandleFunc("/favicon.ico", fileHandler);
 
 	// '/'の処理
 	r.HandleFunc("/", indexHandler)

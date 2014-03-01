@@ -1,9 +1,10 @@
 doctype 5
 html 
   head
+    link[rel="stylesheet"][herf="stylesheet/default.css"]
     title
       block title
-    body
-      p parent
-      block content
+  body
+    p parent
+    block content
                  
