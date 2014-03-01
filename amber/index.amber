@@ -11,7 +11,7 @@ block content
       form[name="login"][action="login"][method="post"]
         p.monospace メールアドレス:
           input[type="text"][name="email"][size="40"] #{email}
-        p.monospace パスワード : &nbsp; &nbsp; 
+        p.monospace パスワード : &nbsp; 
           input[type="password"][name="password"][size="40"] #{password}
         input[type="reset"]
         input.loginbutton[type="submit", value="login"]
