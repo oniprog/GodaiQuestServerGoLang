@@ -1,0 +1,9 @@
+doctype 5
+html 
+  head
+    title
+      block title
+    body
+      p parent
+      block content
+                 
