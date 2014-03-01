@@ -86,5 +86,6 @@ func main() {
 	r.HandleFunc("/", indexHandler)
 	http.Handle("/", r)
 
+    fmt.Printf("Server start : port 3001\n")
 	log.Fatal(http.ListenAndServe(":3001", nil))
 }

@@ -2,9 +2,33 @@ doctype 5
 html 
   head
     link[rel="stylesheet"][herf="stylesheet/default.css"]
-    title
-      block title
+    script[type="text/javascript"][src="http://code.jquery.com/jquery-2.1.0.min.js"]
+    block title
   body
     p parent
     block content
-                 
+    script
+      var textareas = document.getElementsByTagName('textarea');
+      var count = textareas.length;
+      for(i=0;i<count;i++){
+        textareas[i].onkeydown = function(e){
+          if(e.keyCode==9){
+            e.preventDefault();
+            var s = this.selectionStart;
+            this.value = this.value.substring(0,this.selectionStart) + "\t" + this.value.substring(this.selectionEnd);
+            this.selectionEnd = s+1; 
+          }
+        }
+      }
+      function applyEffect(text) {
+        var ret = text.replace(/\r/g, "").replace(/\n/g, "<BR>\r\n") + "\r\n";
+        var htmlreg = /\b(http[s]?:\/\/.+?)(?=[\s\b\t\r\n<>])/g;
+        ret = ret.replace(htmlreg, '!!!!$1!!!!' );
+        ret = ret.replace(/[!]{4}(.+?[.](jpg|png))[!]{4}/g, '<a href="$1" target="_blank"><img style="width:64px;height:64px" src="$1"></a>');
+        ret = ret.replace(/[!]{4}(.+?)[!]{4}/g, '<a href="$1" target="_blank">$1</a>');
+        return ret;
+      }
+      $( function() { var t1 = $(".text").each(function(){ $(this).html(applyEffect($(this).html()));}); })
+
+
+      
