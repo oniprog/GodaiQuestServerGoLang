@@ -16,4 +16,4 @@ block content
             </script>
             <img src="data:image/png;base64,#{$auser.UriImage}" style="width:60px">
           span #{$auser.UserName}さん
-      p 0個の未読情報があります
+      p #{$auser.UnreadCount}個の未読情報があります

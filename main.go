@@ -8,9 +8,9 @@ import (
 	"github.com/eknkc/amber"
 	"github.com/gorilla/mux"
 	"github.com/oniprog/GodaiQuestServerGoLang/handlers"
-	"github.com/oniprog/GodaiQuestServerGoLang/template"
-	"github.com/oniprog/GodaiQuestServerGoLang/sessions"
 	"github.com/oniprog/GodaiQuestServerGoLang/network"
+	"github.com/oniprog/GodaiQuestServerGoLang/sessions"
+	"github.com/oniprog/GodaiQuestServerGoLang/template"
 	"log"
 	"net/http"
 	"os"
@@ -18,7 +18,9 @@ import (
 )
 
 const amberFolder = "./amber"
+
 var amberOptions = amber.Options{PrettyPrint: false, LineNumbers: false}
+
 const secretString = "godaiquest"
 const ServerAddr = "localhost:21014"
 
@@ -47,8 +49,8 @@ func makeNewRoute() {
 	// 'login'の処理
 	r.HandleFunc("/login", handlers.LoginHandler)
 
-    // ユーザリスト
-    r.HandleFunc("/list_user", handlers.ListUserHandler )
+	// ユーザリスト
+	r.HandleFunc("/list_user", handlers.ListUserHandler)
 
 	http.Handle("/", r)
 }
@@ -62,21 +64,21 @@ func main() {
 		os.Exit(1)
 	}
 
-    // ネットワークの初期化
-    err = network.Prepare( ServerAddr )
-    if err != nil {
-       fmt.Printf("network initialization error\n")
-       os.Exit(1)
-    }
+	// ネットワークの初期化
+	err = network.Prepare(ServerAddr)
+	if err != nil {
+		fmt.Printf("network initialization error\n")
+		os.Exit(1)
+	}
 
-    // セッションの準備
-    err = sessions.Prepare(secretString)
-    if err != nil {
-       fmt.Printf("sessions error\n")
-       os.Exit(1)
-    }
+	// セッションの準備
+	err = sessions.Prepare(secretString)
+	if err != nil {
+		fmt.Printf("sessions error\n")
+		os.Exit(1)
+	}
 
-    makeNewRoute()
+	makeNewRoute()
 
 	fmt.Printf("Server start : port 3001\n")
 	log.Fatal(http.ListenAndServe(":3001", nil))

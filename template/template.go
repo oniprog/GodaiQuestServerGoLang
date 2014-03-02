@@ -19,12 +19,10 @@ func Execute(tempname string, w http.ResponseWriter, data interface{}) {
 }
 
 // テンプレートを実行する
-func ExecuteWithFunc(tempname string, w http.ResponseWriter, data interface{}, funcmap template.FuncMap ) {
-    mapTemplate[tempname].Funcs( funcmap )
+func ExecuteWithFunc(tempname string, w http.ResponseWriter, data interface{}, funcmap template.FuncMap) {
+	mapTemplate[tempname].Funcs(funcmap)
 	mapTemplate[tempname].Execute(w, data)
 }
-
-
 
 // テンプレートのコンパイル処理
 func compileTemplate(path string, f os.FileInfo, err error) error {

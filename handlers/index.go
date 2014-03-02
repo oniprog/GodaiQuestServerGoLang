@@ -1,5 +1,5 @@
 /*
-    ログイン画面を扱うためのハンドラー
+   ログイン画面を扱うためのハンドラー
 */
 package handlers
 
@@ -17,9 +17,9 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	if len(queries["message"]) > 0 {
 		data["message"] = queries["message"][0]
 	}
-    if len(queries["email"]) > 0 {
-        data["email"] = queries["email"][0]
-    }
+	if len(queries["email"]) > 0 {
+		data["email"] = queries["email"][0]
+	}
 
 	template.Execute("index", w, data)
 }
