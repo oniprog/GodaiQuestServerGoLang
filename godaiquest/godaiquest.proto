@@ -1,0 +1,319 @@
+package godaiquest;
+
+message AddUser {
+	// メールアドレス
+	optional string mail_address = 1;
+	// ユーザ名
+	optional string user_name = 2;
+	// パスワード
+	optional string password = 3;
+	// ユーザフォルダ
+	optional string user_folder = 4;
+	// コンピュータ名
+	optional string computer_name = 5;
+	// イメージデータ
+	optional bytes user_image = 6;
+}
+
+message Login {
+
+	// メールアドレス
+	optional string mail_address = 1;
+	// パスワード
+	optional string password = 2;
+	// クライアントバージョン
+	optional fixed32 client_version = 3;
+}
+
+message GetDungeon {
+	// ダンジョンID
+	optional int32	id = 1;
+	// ダンジョン番号
+	optional int32 	dungeon_number = 2;
+}
+
+message DungeonInfo {
+	// ダンジョンの情報
+	optional bytes dungeon = 1;
+	// サイズX
+	optional int32 size_x = 2;
+	// サイズY
+	optional int32 size_y = 3;
+	// ダンジョン番号
+	optional int32 dungeon_number = 4;
+}
+
+message ImagePair {
+	optional int32 number = 1;
+	optional bytes image = 2;
+	optional string name = 3;
+	optional int32 owner = 4;
+	optional sfixed64 created = 5;
+	optional bool can_item_image = 6;
+	optional bool new_image = 7;
+}
+
+message ImagePairDic {
+
+	optional uint32 index = 1;
+	optional ImagePair imagepair = 2;
+}
+
+message DungeonBlockImageInfo {
+
+	optional uint32 max_image_num = 1;
+	repeated ImagePairDic image_dic = 2;
+}
+
+message ObjectAttr {
+
+	optional int32 object_id = 1;
+	optional bool can_walk = 2;
+	optional int32 item_id = 3;
+	optional bool bNew = 4;
+	optional int32 command = 5;
+	optional int32 command_sub = 6;
+}
+
+message ObjectAttrDic {
+
+	optional int32 index = 1;
+	optional ObjectAttr object_attr = 2;
+}
+
+message ObjectAttrInfo {
+
+	optional int32 new_id = 1;
+	repeated ObjectAttrDic object_attr_dic = 2;
+}
+
+message Tile {
+
+	optional uint64	tile_id = 1;
+}
+
+message TileDic {
+
+	optional uint64 index = 1;
+	optional Tile tile = 2;
+}
+
+message TileInfo {
+
+	repeated TileDic tile_dic = 1;
+}
+
+message SetDungeon {
+
+	// ユーザID
+	optional int32 user_id = 1;
+	// ダンジョン番号
+	optional int32 dungeon_number = 2;
+
+	// ダンジョンの情報
+	optional DungeonInfo dungeon_info = 3;
+
+	// イメージ情報
+	optional DungeonBlockImageInfo images = 4;
+
+	optional ObjectAttrInfo object_info = 5;
+
+	optional TileInfo tile_info = 6;
+}
+
+message TilePaletteImageSet {
+
+	optional uint64 tile_id = 1;
+}
+message TilePalette {
+
+	optional int32 user_id = 1;
+	repeated TilePaletteImageSet image_set = 2;
+}
+
+message SetBlockImagePalette {
+
+	optional int32 user_id = 1;
+	optional TilePalette tile_palette = 2;
+}
+
+message AUser {
+
+	optional int32 user_id = 1;
+	optional string mail_address = 2;
+	optional string user_name = 3;
+	optional bytes user_image = 4;
+}
+message AUserDic {
+
+	optional int32 index = 1;
+	optional AUser auser = 2;
+}
+message UserInfo {
+
+	repeated AUserDic uesr_dic = 1;
+}
+
+message AItem {
+
+	optional int32 item_id  = 1;
+	optional int32 item_image_id = 2;
+	optional string header_string = 3;
+	optional bytes header_image = 4;
+	optional bool bNew = 5;
+}
+
+message AItemDic {
+	optional int32 index = 1;
+	optional AItem aitem = 2;
+}
+
+message ItemInfo {
+
+	repeated AItemDic aitem_dic = 1;
+}
+
+message ALocation {
+
+	optional int32 user_id = 1;
+	optional int32 ix = 2;
+	optional int32 iy = 3;
+	optional int32 dungeon_user_id = 4;
+	optional int32 dungeon_number = 5;
+}
+
+message ALocationDic {
+	optional int32 index = 1;
+	optional ALocation alocation = 2;
+}
+
+message LocationInfo {
+
+	repeated ALocationDic alocation_dic = 1;
+}
+
+message Signal {
+	
+	optional int32 signal = 1;
+	optional int32 id = 2;
+	optional int32 ix = 3;
+	optional int32 iy = 4;
+}
+
+message SignalQueue {
+
+	optional string system_message = 1;
+	repeated Signal signals = 2;
+}
+
+message IslandGround {
+
+	optional int32 user_id = 1;
+	optional int32 ix1 = 2;
+	optional int32 iy1 = 3;
+	optional int32 ix2 = 4;
+	optional int32 iy2 = 5;
+}
+
+message IslandGroundInfo {
+
+	repeated IslandGround ground_list = 1;
+}
+
+message AMessage {
+
+	optional int32 uesr_id = 1;
+	optional string message = 2;
+}
+
+message AMessageDic {
+	optional int32 index = 1;
+	optional AMessage amessage = 2;
+}
+message MessageInfo {
+
+	repeated AMessageDic message_dic = 1;
+}
+
+message APickuped {
+
+	optional int32 item_id = 1;
+	optional int32 user_id = 2;
+	optional sfixed64 date_time = 3;
+}
+
+message PickupedInfo {
+
+	repeated APickuped apickuped = 1;
+}
+
+message Ashiatolog {
+
+	repeated string alog = 1;
+}
+
+message ItemArticle {
+
+	optional int32 item_id = 1;
+	optional int32 article_id = 2;
+	optional int32 user_id = 3;
+	optional string contents = 4;
+	optional sfixed64 cretae_time = 5;
+}
+
+message ItemArticleDic {
+	optional int32 index = 1;
+	optional ItemArticle item_article = 2;
+}
+
+message ItemArticleInfo {
+
+	optional int32 item_id = 1;
+	repeated ItemArticleDic item_article_dic = 2;
+}
+
+message MonsterDic {
+
+	optional int32 key = 1;
+	optional int32 value = 2;
+}
+message MonsterInfo {
+
+	repeated MonsterDic monster_dic = 1;
+}
+
+message RDReadItemDic {
+	optional int32 item_id = 1;
+}
+message RDReadItemInfo {
+	optional int32 user_id = 1;
+	repeated RDReadItemDic read_item_dic = 2;
+}
+
+// 外部モンスター情報
+message ARealMonster {
+	optional int32 monster_id = 1;
+	optional string monster_name = 2;
+	optional bytes monster_image = 3;
+	optional int32 monster_expvalue = 4;
+	optional string monster_spell = 5;
+	optional int32 monster_src_id = 6; // 元モンスターのID
+}
+
+message RealMonsterInfo {
+	repeated ARealMonster real_monster = 1;
+}
+
+// 外部モンスターの位置情報
+message ARealMonsterLocation {
+	optional int32 monster_id = 1;
+	optional int32 monster_ix = 2;
+	optional int32 monster_iy = 3;
+	optional int32 dungeon_number = 4; // 未使用
+	optional int32 monster_src_id = 5; // 元モンスターのID
+}
+
+message RealMonsterLocationInfo {
+	repeated ARealMonsterLocation location_list = 1;
+}
+

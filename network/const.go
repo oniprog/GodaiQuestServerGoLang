@@ -1,0 +1,53 @@
+package network
+
+const COMMAND_Nothing = 0 
+const COMMAND_GoUp = 1
+const COMMAND_GoDown = 2
+const COMMAND_IntoDungeon = 3
+const COMMAND_GoOutDungeon = 4
+
+// GQS(Godai Quest Server)の通信コマンド
+const COM_AddUser = 1
+const COM_TryLogon = 2
+const COM_GetDungeon = 3
+const COM_SetDungeon = 4
+const COM_GetDungeonBlockImage = 5
+const COM_SetDungeonBlockImage = 6
+const COM_GetTilePalette = 7
+const COM_SetTilePalette  =8
+const COM_GetObjectAttrInfo  = 9
+const COM_SetObjectAttrinfo = 10
+const COM_GetTileList = 11
+const COM_GetUserInfo = 12
+const COM_SetAItem = 13
+const COM_GetItemInfo = 14
+const COM_GetAItem = 15
+const COM_SetAUser = 16
+const COM_ChangeAItem = 17
+const COM_UploadItemFiles = 18
+const COM_Polling = 19
+const COM_GetIslandGroundInfo = 20
+const COM_ChangeObjectAttr = 21
+const COM_ChangeDungeonBlockImagePair = 22
+const COM_GetLocationInfo = 23
+const COM_GetMessageInfo  = 24
+const COM_SetAMessage = 25
+const COM_GetExpValue = 26
+const COM_GetUnpickedupItemInfo =27
+const COM_GetAshiato = 28
+const COM_GetAshiatoLog = 29
+const COM_GetArticleString = 30
+const COM_SetItemArticle  = 31
+const COM_ReadArticle  =32
+const COM_DeleteLastItemArticle = 33
+const COM_UseExperience = 34
+const COM_GetDungeonDepth  = 35
+const COM_GetMonsterInfo  =36
+const COM_SetMonster  = 37
+const COM_GetRDReadItemInfo = 38
+const COM_SetRDReadItem = 39
+const COM_ChangePassword = 40
+const COM_SetUserFolder  = 41
+const COM_GetUserFolder  = 42
+const COM_GetRealMonsterSrcInfo =43
+const COM_GetItemInfoByUserId = 44

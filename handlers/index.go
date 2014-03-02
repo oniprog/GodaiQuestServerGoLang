@@ -1,3 +1,6 @@
+/*
+    ログイン画面を扱うためのハンドラー
+*/
 package handlers
 
 import (
@@ -5,7 +8,7 @@ import (
 	"net/http"
 )
 
-// '/' の処理
+// 処理
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]string)
@@ -14,12 +17,9 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	if len(queries["message"]) > 0 {
 		data["message"] = queries["message"][0]
 	}
-	email := r.Form["email"]
-	password := r.Form["password"]
+    if len(queries["email"]) > 0 {
+        data["email"] = queries["email"][0]
+    }
 
-	if len(email) > 0 && len(password) > 0 {
-		data["email"] = email[0]
-		data["password"] = password[0]
-	}
 	template.Execute("index", w, data)
 }

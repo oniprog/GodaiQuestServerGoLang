@@ -7,19 +7,20 @@ import (
 	"fmt"
 	"github.com/eknkc/amber"
 	"github.com/gorilla/mux"
-	"github.com/gorilla/sessions"
 	"github.com/oniprog/GodaiQuestServerGoLang/handlers"
 	"github.com/oniprog/GodaiQuestServerGoLang/template"
+	"github.com/oniprog/GodaiQuestServerGoLang/sessions"
+	"github.com/oniprog/GodaiQuestServerGoLang/network"
 	"log"
 	"net/http"
 	"os"
 	"path"
 )
 
-var amberFolder = "./amber"
+const amberFolder = "./amber"
 var amberOptions = amber.Options{PrettyPrint: false, LineNumbers: false}
-
-var store = sessions.NewCookieStore([]byte("godaiquest-secret"))
+const secretString = "godaiquest"
+const ServerAddr = "localhost:21014"
 
 // ファイルを返すだけのハンドラ
 func fileHandler(w http.ResponseWriter, r *http.Request) {
@@ -28,14 +29,7 @@ func fileHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, path.Join("public", r.URL.Path[1:]))
 }
 
-func main() {
-
-	// テンプレートの準備
-	err := template.Prepare(amberFolder, amberOptions)
-	if err != nil {
-		fmt.Printf("template compile error\n")
-		os.Exit(1)
-	}
+func makeNewRoute() {
 
 	r := mux.NewRouter()
 
@@ -54,6 +48,32 @@ func main() {
 	r.HandleFunc("/login", handlers.LoginHandler)
 
 	http.Handle("/", r)
+}
+
+func main() {
+
+	// テンプレートの準備
+	err := template.Prepare(amberFolder, amberOptions)
+	if err != nil {
+		fmt.Printf("template compile error\n")
+		os.Exit(1)
+	}
+
+    // ネットワークの初期化
+    err = network.Prepare( ServerAddr )
+    if err != nil {
+       fmt.Printf("network initialization error\n")
+       os.Exit(1)
+    }
+
+    // セッションの準備
+    err = sessions.Prepare(secretString)
+    if err != nil {
+       fmt.Printf("sessions error\n")
+       os.Exit(1)
+    }
+
+    makeNewRoute()
 
 	fmt.Printf("Server start : port 3001\n")
 	log.Fatal(http.ListenAndServe(":3001", nil))
