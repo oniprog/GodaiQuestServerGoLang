@@ -24,7 +24,7 @@ func ListUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// ページごとの未読数を読み込む
+	// ページごとの未読を読み込む
 	mapUserUnread := make(map[int][]int)
 	for _, auserdic := range userInfo.GetUesrDic() {
 
@@ -50,6 +50,12 @@ func ListUserHandler(w http.ResponseWriter, r *http.Request) {
 		mapUsers[int(auser.GetUserId())] = mapUser
 	}
 	dataTemp["UserInfo"] = mapUsers
+
+	// メッセージを取り出しておく
+	queries := r.URL.Query()
+	if len(queries["message"]) > 0 {
+		dataTemp["message"] = queries["message"][0]
+	}
 
 	// レンダリング
 	template.Execute("list_user", w, dataTemp)

@@ -121,6 +121,10 @@ func GetAllUserInfo(client *Client, w http.ResponseWriter, r *http.Request) (*go
 // 未取得アイテム数の取得
 func GetUnpickedupItemInfo(client *Client, w http.ResponseWriter, r *http.Request, userId int, dungeonId int) ([]int, error) {
 
+	// ロックする
+	lock <- 1
+	defer func() { <-lock }()
+
 	const MAX_ITEM = 100
 	retUserId := make([]int, MAX_ITEM)
 
@@ -150,3 +154,26 @@ func GetUnpickedupItemInfo(client *Client, w http.ResponseWriter, r *http.Reques
 
 	return retUserId[:retLength], err
 }
+
+// ユーザIdに対応するアイテム情報を得る
+func GetItemInfoByUserId(client *Client, w http.ResponseWriter, r *http.Request, userId int) (*godaiquest.ItemInfo, error) {
+
+	// ロックする
+	lock <- 1
+	defer func() { <-lock }()
+
+	client.WriteDword( COM_GetItemInfoByUserId )
+	client.WriteDword( 1 )  // Version
+	client.WriteDword( userId )
+
+	okcode, err := client.ReadDword(nil)
+	if okcode != 1 {
+		return nil, errors.New("アイテム情報の取得に失敗しました")
+	}
+
+	data, err := client.ReadProtoData(err)
+	retItemInfo := &godaiquest.ItemInfo{}
+	err = proto.Unmarshal( *data, retItemInfo )
+	return retItemInfo, err
+}
+
