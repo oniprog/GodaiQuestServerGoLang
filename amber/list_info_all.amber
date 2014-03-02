@@ -1,0 +1,23 @@
+extends layout
+
+block title
+  | Godai Quest Info All List
+
+block content
+  h2 #{name}さんの未読情報 &nbsp; &nbsp;
+    a.small[href="list_user"] 戻る
+
+    if before || after
+      div.box2
+        if before
+          a[href="list_info?view_id="+view_id+"&index="+(index-pagesize)] <<戻る
+
+        if after
+          a[href="list_info?view_id="+view_id+"&index="+(index+pagesize)] >>進む
+    
+  each $i, $aitem in itemlist
+    div.box.text #{$aitem.HeaderString}
+    br
+    br
+  br
+  br

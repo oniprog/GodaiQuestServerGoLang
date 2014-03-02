@@ -54,6 +54,7 @@ func makeNewRoute() {
 
 	// 情報リスト
 	r.HandleFunc("/list_info", handlers.ListInfoHandler)
+	r.HandleFunc("/list_info_all", handlers.ListInfoAllHandler)
 
 	http.Handle("/", r)
 }

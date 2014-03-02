@@ -14,6 +14,17 @@ const pagesize = 10
 
 // 情報の一覧（未読だけ)
 func ListInfoHandler(w http.ResponseWriter, r *http.Request) {
+	
+	ListInfoHandlerCommon( false, w, r )
+}
+// 情報の一覧（全部)
+func ListInfoAllHandler(w http.ResponseWriter, r *http.Request) {
+
+	ListInfoHandlerCommon( true, w, r )
+}
+
+// 共通部分
+func ListInfoHandlerCommon(all bool, w http.ResponseWriter, r *http.Request) {
 
 	// ログインチェック
 	client, err := sessions.GetClient(w, r)
@@ -88,7 +99,7 @@ func ListInfoHandler(w http.ResponseWriter, r *http.Request) {
 		aitem := aitemdic.GetAitem()
 		itemId := int(aitem.GetItemId())
 		_, ok := mapUnread[itemId]
-		if !ok {
+		if !ok && !all {
 			continue
 		}
 		if ( i < index ) {
@@ -106,12 +117,12 @@ func ListInfoHandler(w http.ResponseWriter, r *http.Request) {
 	dataTemp["pagesize"] = pagesize
 
 	// レンダリング
-	template.Execute("list_info", w, dataTemp)
+	if all {
+		template.Execute("list_info_all", w, dataTemp)
+	} else {
+		template.Execute("list_info", w, dataTemp)
+	}
 }
-
-
-
-
 
 
 
