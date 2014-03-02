@@ -18,6 +18,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+    // 同じemailを持つアカウントの接続を切る
+    email := r.PostFormValue("email")
+    sessions.DeleteClientSameEmail( email )
+
     // 接続処理を行う
     client := network.TryLogon(w,r)
 

@@ -9,4 +9,11 @@ block content
     A[href="write_info"] 新規記事を書く
 
   h2 未読情報
-    div #{test}
+    each $auser in UserInfo
+      h2
+        A[href="list_info?view_id"+$auser.UserId]
+          script
+            </script>
+            <img src="data:image/png;base64,#{$auser.UriImage}" style="width:60px">
+          span #{$auser.UserName}さん
+      p 0個の未読情報があります

@@ -22,20 +22,25 @@ func Prepare(secret string) error {
      return nil
 }
 
+// 同じclientを削除する
+func DeleteClientSameEmail(email string) {
+    // 同じemailを持つ接続を切る 
+    for index, tmp_email := range mapClientEmail {
+        if ( tmp_email == email ) {
+           fmt.Printf("Delete client : %s(%d)\n", email, index )
+           client := mapClient[index]
+           delete(mapClient, index)
+           delete(mapClientEmail, index)
+           delete(mapClientAccess, index)
+           client.Close()
+           break
+        }
+    }
+}
+
 // 作成したclientを登録する
 func SetNewClient(w http.ResponseWriter, r *http.Request, client *network.Client, email string) {
 
-     // 同じemailを持つ接続を切る 
-     for index, tmp_email := range mapClientEmail {
-         if ( tmp_email == email ) {
-            client := mapClient[index]
-            delete(mapClient, index)
-            delete(mapClientEmail, index)
-            delete(mapClientAccess, index)
-            client.Close()
-            break
-         }
-     }
 
      // 登録作業
      mapClient[cntClient] = client

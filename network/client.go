@@ -20,6 +20,7 @@ type Client struct {
      Buffer *bytes.Buffer
      ReadedSize int  // 読み込み済みのバイト数(バッファの切り詰めに使用する)
      DataBuf []byte
+     UserId int
 }
 
 // 接続の準備をする
@@ -46,7 +47,7 @@ func Connect() (*net.TCPConn, error) {
 func NewClient( conn *net.TCPConn ) *Client {
 
      buf := make([]byte, 0, BUFFER_SIZE )
-     return &Client{conn, bytes.NewBuffer(buf), 0, make([]byte, 1024) }
+     return &Client{conn, bytes.NewBuffer(buf), 0, make([]byte, 1024), 0 }
 }
 
 // dword書き込み
@@ -82,11 +83,28 @@ func (this *Client) WriteDwordRev(dword int) error {
 }
 
 // bytes書き込み
-func (this *Client) WriteBytes(data *[]byte) error {
+func (this *Client) WriteProtoData(data *[]byte) error {
 
      err := this.WriteDwordRev( len(*data) )
      _, err = this.Conn.Write( *data )
      return err
+}
+
+// bytes読み込み
+func (this *Client) ReadProtoData(err error) ( *[]byte, error ) {
+
+    if err != nil {
+        return nil, err
+    }
+
+    size, err := this.ReadDwordRev( err )
+    if err != nil {
+       return nil, err
+    }
+    err = this.EnsureReadByte(size)
+    ret := make([]byte, size)
+    this.Buffer.Read( ret )
+    return &ret, nil
 }
 
 // dword読み込み
@@ -109,6 +127,25 @@ func (this *Client) ReadDword( err error ) (int, error) {
      return int(i32), nil
 }
 
+// dword読み込み
+func (this *Client) ReadDwordRev( err error ) (int, error) {
+
+     if err != nil {
+        return 0, err
+     }
+
+     err = this.EnsureReadByte(4)
+     if err != nil {
+        return 0, err
+     }
+
+     var i32 int32
+     binary.Read(this.Buffer, binary.LittleEndian, &i32 )
+     this.ReadedSize += 4
+     this.Refresh()
+
+     return int(i32), nil
+}
 // 読み込めることを保証する
 func (this *Client) EnsureReadByte(ensurebyte int) error {
 

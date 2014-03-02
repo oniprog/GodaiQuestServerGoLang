@@ -18,6 +18,14 @@ func Execute(tempname string, w http.ResponseWriter, data interface{}) {
 	mapTemplate[tempname].Execute(w, data)
 }
 
+// テンプレートを実行する
+func ExecuteWithFunc(tempname string, w http.ResponseWriter, data interface{}, funcmap template.FuncMap ) {
+    mapTemplate[tempname].Funcs( funcmap )
+	mapTemplate[tempname].Execute(w, data)
+}
+
+
+
 // テンプレートのコンパイル処理
 func compileTemplate(path string, f os.FileInfo, err error) error {
 

@@ -2,6 +2,7 @@ package network
 
 import (
     "crypto/sha512"
+    "errors"
     "fmt"
     "net/http"
     "code.google.com/p/goprotobuf/proto"
@@ -10,7 +11,7 @@ import (
 
 // 同期をとるためのオブジェクト
 var lock = make(chan int, 1)
-
+     
 //
 func RedirectIndex( w http.ResponseWriter, r *http.Request, email string, message string ) {
 
@@ -25,6 +26,7 @@ func RedirectIndex( w http.ResponseWriter, r *http.Request, email string, messag
 // ログインを試みる
 func TryLogon(w http.ResponseWriter, r *http.Request) *Client {
 
+    // ロックする
     lock <- 1
     defer func() {<- lock}()
 
@@ -74,12 +76,14 @@ func TryLogon(w http.ResponseWriter, r *http.Request) *Client {
           ClientVersion: proto.Uint32(CLIENT_VERSION),
     }          
     data, err := proto.Marshal(login)
-    client.WriteBytes( &data )
+    client.WriteProtoData( &data )
     
     okcode, err = client.ReadDword( err )
     switch(okcode) {
         case 1:
             // ログイン成功
+            userId, _:= client.ReadDword( err )
+            client.UserId = userId
             return client
         case 3:
             RedirectIndex( w, r, email, "パスワードが間違っています");
@@ -94,7 +98,24 @@ func TryLogon(w http.ResponseWriter, r *http.Request) *Client {
 
 
 // すべてのユーザの情報を得る
-func GetAllUesrInfo( client *Client ) {
+func GetAllUserInfo( client *Client, w http.ResponseWriter, r *http.Request ) (*godaiquest.UserInfo, error) {
 
+    // ロックする
+    lock <- 1
+    defer func() {<- lock}()
 
+    //
+    client.WriteDword( COM_GetUserInfo )
+    client.WriteDword( 1 )  // Version 
+
+    var err error = nil
+    okcode, err := client.ReadDword(err)
+    if okcode != 1 {
+       return nil, errors.New("ユーザ情報の取得に失敗しました")
+    }
+
+    data, err := client.ReadProtoData(err)
+    newUserInfo := &godaiquest.UserInfo{}
+    err = proto.Unmarshal( *data, newUserInfo )
+    return newUserInfo, err
 }
