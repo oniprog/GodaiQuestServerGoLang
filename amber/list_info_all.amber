@@ -10,13 +10,18 @@ block content
     if before || after
       div.box2
         if before
-          a[href="list_info?view_id="+view_id+"&index="+(index-pagesize)] <<戻る
+          a[href="list_info_all?view_id="+view_id+"&index="+(index-pagesize)] <<戻る
 
         if after
-          a[href="list_info?view_id="+view_id+"&index="+(index+pagesize)] >>進む
+          a[href="list_info_all?view_id="+view_id+"&index="+(index+pagesize)] >>進む
     
+  $view_id_tmp = view_id
   each $i, $aitem in itemlist
     div.box.text #{$aitem.HeaderString}
+    $info_id_tmp = $aitem.ItemId
+    script
+      </script>
+      <A href="read_info?view_id=#{$view_id_tmp}&info_id=#{$info_id_tmp}">読む</A>
     br
     br
   br
