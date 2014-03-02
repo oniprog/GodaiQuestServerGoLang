@@ -56,6 +56,9 @@ func makeNewRoute() {
 	r.HandleFunc("/list_info", handlers.ListInfoHandler)
 	r.HandleFunc("/list_info_all", handlers.ListInfoAllHandler)
 
+	// ログアウト
+	r.HandleFunc("/logout", handlers.LogoutHandler )
+
 	http.Handle("/", r)
 }
 
