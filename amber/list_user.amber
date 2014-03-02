@@ -9,3 +9,4 @@ block content
     A[href="write_info"] 新規記事を書く
 
   h2 未読情報
+    div #{test}

@@ -10,7 +10,7 @@ html
       span.small 　　　新感覚 情報共有 SNS &nbsp; &nbsp; 
       a#logout[href="logout"] logout
 
-    if message
+    if message 
       div
         p#error_message #{message}
 
