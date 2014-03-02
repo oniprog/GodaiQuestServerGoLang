@@ -9,6 +9,7 @@ import (
 	"net/http"
     "code.google.com/p/goprotobuf/proto"
 	"github.com/oniprog/GodaiQuestServerGoLang/network"
+	"github.com/oniprog/GodaiQuestServerGoLang/sessions"
     "github.com/oniprog/GodaiQuestServerGoLang/godaiquest"
 )
 
@@ -78,7 +79,6 @@ func makeClient(w http.ResponseWriter, r *http.Request) *network.Client {
     switch(okcode) {
         case 1:
             // ログイン成功
-            http.Redirect(w, r, "/index", http.StatusSeeOther)
             return client
         case 3:
             RedirectIndex( w, r, email, "パスワードが間違っています");
@@ -100,5 +100,12 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
     // 接続処理を行う
-    makeClient(w,r)
+    client := makeClient(w,r)
+
+    // 登録処理
+    if client != nil {
+        email := r.PostFormValue("email")
+        sessions.SetNewClient( w, r, client, email )
+        http.Redirect(w, r, "/list_user", http.StatusSeeOther)
+    }
 }

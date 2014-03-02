@@ -47,6 +47,9 @@ func makeNewRoute() {
 	// 'login'の処理
 	r.HandleFunc("/login", handlers.LoginHandler)
 
+    // ユーザリスト
+    r.HandleFunc("/list_user", handlers.ListUserHandler )
+
 	http.Handle("/", r)
 }
 
