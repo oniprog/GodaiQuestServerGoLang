@@ -6,7 +6,11 @@ import (
 	"errors"
 	"fmt"
 	"github.com/oniprog/GodaiQuestServerGoLang/godaiquest"
+	"io/ioutil"
 	"net/http"
+	"os"
+	"path"
+	"strconv"
 )
 
 // 同期をとるためのオブジェクト
@@ -177,3 +181,80 @@ func GetItemInfoByUserId(client *Client, w http.ResponseWriter, r *http.Request,
 	return retItemInfo, err
 }
 
+// アイテム詳細情報を得る
+func GetAItem(client *Client, w http.ResponseWriter, r *http.Request, infoId int) ([]os.FileInfo, error) {
+
+	// ロックする
+	lock <- 1
+	defer func() { <-lock }()
+
+	// ダウンロードフォルダ
+	DownloadDir := path.Join( DownloadRoot, strconv.FormatUint(uint64(infoId), 10) )
+
+	// ファイル情報を得る
+	listFiles, err := ioutil.ReadDir( DownloadDir )
+
+	if err != nil {
+		fmt.Printf("Internal Error : ReadDir : %s\n", DownloadDir )
+		listFiles = make( []os.FileInfo, 0 )
+		err = nil
+	}
+
+	//
+	client.WriteDword( COM_GetAItem )
+	client.WriteDword( 2 ) // version
+	client.WriteDword( infoId )
+	client.WriteFileInfo( listFiles, DownloadDir )
+
+	err = client.ReadFiles( DownloadDir, err )
+
+	//
+	listRetFiles, err := ioutil.ReadDir( DownloadDir )
+	
+	return listRetFiles, err 
+}
+
+// アイテムを読んだことを記録する
+func ReadMarkAtArticle( client *Client, infoId int ) error {
+
+	// ロックする
+	lock <- 1
+	defer func() { <-lock }()
+
+	client.WriteDword( COM_ReadArticle )
+	client.WriteDword( 1 ) // version
+	client.WriteDword( infoId )
+	client.WriteDword( client.UserId )
+
+	okcode, err := client.ReadDword( nil )
+	if okcode != 1 {
+		return errors.New("アイテムを読んだことを記録できませんでした")
+	}
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// 記事を読む
+func GetArticleString( client *Client, infoId int ) (string, error ) {
+
+	// ロックする
+	lock <- 1
+	defer func() { <-lock }()
+
+	client.WriteDword( COM_GetArticleString )
+	client.WriteDword( 1 ) // version
+	client.WriteDword( infoId )
+	
+	okcode, err := client.ReadDword( nil )
+	if okcode != 1 {
+		return "", errors.New("記事への書き込みを読むことができませんでした")
+	}
+	if err != nil {
+		return "", err
+	}
+
+	ret, err := client.ReadString(err)
+	return ret, err
+}

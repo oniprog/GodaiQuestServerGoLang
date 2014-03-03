@@ -7,11 +7,16 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"os"
+	"path"
+	"path/filepath"
+	"compress/gzip"
 )
 
 var Host string = ""
+var DownloadRoot = ""
 
-const BUFFER_SIZE = 10240
+const BUFFER_SIZE = 1024 * 1024
 const CLIENT_VERSION = 2014021819
 
 // 接続管理
@@ -24,8 +29,12 @@ type Client struct {
 }
 
 // 接続の準備をする
-func Prepare(host string) error {
+func Prepare(host string, downloadRoot string) error {
 	Host = host
+	DownloadRoot = downloadRoot
+
+	os.Mkdir(DownloadRoot, 0700)
+	
 	return nil
 }
 
@@ -165,6 +174,35 @@ func (this *Client) ReadByte(err error) (byte, error) {
 	return ret, err
 }
 
+// 1バイト書き込む
+func (this* Client) WriteByte( data byte ) error {
+
+	abyte := make([] byte, 1)
+	abyte[0] = data
+	_, err := this.Conn.Write( abyte )
+	return err
+}
+
+// 長さを書き込む
+func (this *Client) WriteLength(len int) {
+
+	if len < 0x10 {
+		this.WriteByte( byte(len) )
+	} else if len <= 0xFFF {
+		this.WriteByte( byte(len >> 8 | 0x10 ) )
+		this.WriteByte( byte(len & 0xff) )
+	} else if len <= 0xFFFFF {
+		this.WriteByte( byte(len >> 16 | 0x20 ) )
+		this.WriteByte( byte(len >> 8 & 0xff ) )
+		this.WriteByte( byte(len & 0xff ) )
+	} else {
+		this.WriteByte( byte(len >> 24 | 0x30 ) )
+		this.WriteByte( byte(len >> 16 & 0xff ) )
+		this.WriteByte( byte(len >> 8 & 0xff ) )
+		this.WriteByte( byte(len & 0xff ) )
+	}
+}
+
 // 長さを読み込む
 func (this *Client) ReadLength(err error) (int, error) {
 
@@ -209,6 +247,105 @@ func (this *Client) EnsureReadByte(ensurebyte int) error {
 	return nil
 }
 
+// 文字列を書き込む
+func (this *Client) WriteString( str string ) error {
+
+	this.WriteLength( len(str)+1 )
+	_, err := this.Conn.Write( []byte(str) )
+	this.Conn.Write( []byte{0} )
+	return err
+}
+
+// 文字列を得る
+func (this *Client) ReadString( err error ) (string, error ) {
+
+	if err != nil {
+		return "", err
+	}
+
+	strlength, err := this.ReadLength(nil)
+	data := make([] byte, strlength )
+	err = this.EnsureReadByte(strlength)
+	this.Buffer.Read(data)
+
+	ret := BinaryUTF16ToString(data)
+	return ret, nil
+}
+// ファイル情報を送信する
+func (this *Client) WriteFileInfo( listFiles [] os.FileInfo, basedir string ) {
+
+	for _, fileinfo := range listFiles {
+
+		this.WriteDword( int(fileinfo.Size() ) )
+		filerelpath, _ := filepath.Rel(basedir, fileinfo.Name() )
+		this.WriteString( filerelpath )
+		fmt.Printf("file info : %s\n", filerelpath )
+	}
+	this.WriteDword( -1 )
+}
+
+// バイナリを受信する
+func (this *Client) ReadBinary( err error ) ( []byte, error ) {
+
+	if err != nil {
+		return nil, err
+	}
+
+	size, err := this.ReadLength(nil)
+
+	err = this.EnsureReadByte(size)
+	data := make([] byte, size )
+	this.Buffer.Read(data)
+
+	return data, err
+}
+
+// ファイルを受信する
+func (this *Client) ReadFiles( basedir string, err error ) error {
+
+	if err != nil {
+		return err
+	}
+
+	for {
+
+		continueFlag, err := this.ReadByte(err)
+		if err != nil {
+			return err
+		}
+		if continueFlag == 0 {
+			break
+		}
+
+		filename, err := this.ReadString(err)
+		outputPath := path.Join( basedir, filepath.Clean(filename ) )
+		fmt.Printf("Receive file : %s -> %s\n", filename, outputPath )
+
+		data, err := this.ReadBinary(err)
+		gzipReader, _:= gzip.NewReader( bytes.NewReader(data) )
+		fo, _:= os.Create( outputPath )
+		
+		buf := make([]byte, 10240 )
+		for {
+			size, err := gzipReader.Read(buf)
+			if size == 0 {
+				break
+			}
+			if err != nil {
+				gzipReader.Close()
+				fo.Close()
+				return err
+			}
+			fo.Write(buf[:size])
+		}
+
+		gzipReader.Close()
+		fo.Close()
+	}
+
+	return err
+}
+
 // バッファを切り詰める
 func (this *Client) Refresh() {
 	if this.Buffer.Len() == 0 {
@@ -216,6 +353,7 @@ func (this *Client) Refresh() {
 	}
 	if this.ReadedSize > BUFFER_SIZE/2 {
 		this.Buffer = bytes.NewBuffer(this.Buffer.Bytes())
+		this.ReadedSize = 0
 	}
 }
 

@@ -12,6 +12,13 @@ h1 {
     font-family: monospace;
 }
 
+.hbox {
+    display:box;
+    display:-webkit-box;
+    display:-moz-box;
+    box-orient:horizontal;
+}
+
 textarea {
     tab-size:4;
 }

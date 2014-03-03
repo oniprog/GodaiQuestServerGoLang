@@ -22,7 +22,8 @@ const amberFolder = "./amber"
 var amberOptions = amber.Options{PrettyPrint: false, LineNumbers: false}
 
 const secretString = "godaiquest"
-const ServerAddr = "localhost:21014"
+const serverAddr = "localhost:21014"
+const downloadRoot = "public/download"
 
 // ファイルを返すだけのハンドラ
 func fileHandler(w http.ResponseWriter, r *http.Request) {
@@ -56,6 +57,9 @@ func makeNewRoute() {
 	r.HandleFunc("/list_info", handlers.ListInfoHandler)
 	r.HandleFunc("/list_info_all", handlers.ListInfoAllHandler)
 
+	// 情報
+	r.HandleFunc("/read_info", handlers.ReadInfoHandler)
+
 	// ログアウト
 	r.HandleFunc("/logout", handlers.LogoutHandler )
 
@@ -63,6 +67,7 @@ func makeNewRoute() {
 }
 
 func main() {
+
 
 	// テンプレートの準備
 	err := template.Prepare(amberFolder, amberOptions)
@@ -72,7 +77,7 @@ func main() {
 	}
 
 	// ネットワークの初期化
-	err = network.Prepare(ServerAddr)
+	err = network.Prepare(serverAddr, downloadRoot)
 	if err != nil {
 		fmt.Printf("network initialization error\n")
 		os.Exit(1)
