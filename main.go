@@ -60,8 +60,9 @@ func makeNewRoute() {
 	// 情報
 	r.HandleFunc("/read_info", handlers.ReadInfoHandler)
 
-	// ファイルアップロード
+	// ファイル
 	r.HandleFunc("/upload_file", handlers.UploadFileHandler)
+	r.HandleFunc("/delete_file", handlers.DeleteFileHandler)
 
 	// ログアウト
 	r.HandleFunc("/logout", handlers.LogoutHandler)

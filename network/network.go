@@ -194,32 +194,32 @@ func GetItemInfoByUserId(client *Client, w http.ResponseWriter, r *http.Request,
 
 // ファイル情報格納
 type GodaiFileInfo struct {
-	Name string
+	Name     string
 	PartPath string
-	Size int
+	Size     int
 }
 
 // ファイル情報を得る
-func ReadDir(basedir string, dirpart string ) []GodaiFileInfo{
+func ReadDir(basedir string, dirpart string) []GodaiFileInfo {
 
 	const MAX_FILE = 1000
-	retArray := make([]GodaiFileInfo, MAX_FILE ) // 1000個までしか扱わない
+	retArray := make([]GodaiFileInfo, MAX_FILE) // 1000個までしか扱わない
 	listFiles, _ := ioutil.ReadDir(path.Join(basedir, dirpart))
 	cnt := 0
 	for _, info := range listFiles {
 
 		if info.IsDir() {
-			retTmp := ReadDir(basedir, path.Join(dirpart, info.Name() ) )
+			retTmp := ReadDir(basedir, path.Join(dirpart, info.Name()))
 			for _, infoTmp := range retTmp {
 
-				if cnt >= MAX_FILE{
+				if cnt >= MAX_FILE {
 					break
 				}
 				retArray[cnt] = infoTmp
 				cnt++
 			}
 		} else {
-			newFileInfo := GodaiFileInfo{ info.Name(), path.Join( dirpart, info.Name() ), int(info.Size()) }
+			newFileInfo := GodaiFileInfo{info.Name(), path.Join(dirpart, info.Name()), int(info.Size())}
 			if cnt >= MAX_FILE {
 				break
 			}

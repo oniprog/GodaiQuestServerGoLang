@@ -5,15 +5,15 @@ import (
 	"fmt"
 	"github.com/oniprog/GodaiQuestServerGoLang/network"
 	"github.com/oniprog/GodaiQuestServerGoLang/sessions"
-	"io"
 	"net/http"
 	"os"
 	"path"
+	"path/filepath"
 	"strconv"
 )
 
-//  情報を読む
-func UploadFileHandler(w http.ResponseWriter, r *http.Request) {
+// ファイルの削除
+func DeleteFileHandler(w http.ResponseWriter, r *http.Request) {
 
 	// ログインチェック
 	client, err := sessions.GetClient(w, r)
@@ -38,8 +38,17 @@ func UploadFileHandler(w http.ResponseWriter, r *http.Request) {
 		infoId64, _ := strconv.ParseInt(queries["info_id"][0], 10, 0)
 		infoId = int(infoId64)
 	} else {
-		err = errors.New("書き込む情報の指定がありません")
+		err = errors.New("削除する対象の情報の指定がありません")
 		network.RedirectInfoTop(w, r, "", err.Error())
+		return
+	}
+
+	// ファイル名を得る
+	filename := ""
+	if len(queries["filename"]) > 0 {
+		filename = queries["filename"][0]
+	} else {
+		network.RedirectInfoTop(w, r, "", "削除するファイル名の指定がありません")
 		return
 	}
 
@@ -64,34 +73,13 @@ func UploadFileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	if !find {
 
-		network.RedirectInfoTop(w, r, "", "自分の情報に対してのみアップロードできます")
+		network.RedirectInfoTop(w, r, "", "自分の情報に対してのみ削除できます")
 		return
 	}
 
 	downloadDir := path.Join(network.DownloadRoot, strconv.FormatUint(uint64(infoId), 10))
-	os.MkdirAll(downloadDir, 0777)
-
-	r.ParseMultipartForm(1024 * 1024 * 100)
-	for i := 0; i < 100; i++ {
-		filename := fmt.Sprintf("b%d", i)
-		file, handler, err := r.FormFile(filename)
-		if err != nil {
-			continue
-		}
-
-		filepath1 := path.Join(downloadDir, handler.Filename)
-		fmt.Printf("Upload file : %s\n", filepath1)
-
-		f, err := os.Create(filepath1)
-		if err != nil {
-			fmt.Printf("Error : %s\n", err.Error())
-			file.Close()
-			continue
-		}
-		io.Copy(f, file)
-		file.Close()
-		f.Close()
-	}
+	fmt.Printf("delete file : %s\n", filepath.Clean(filename))
+	os.Remove(path.Join(downloadDir, filepath.Clean(filename)))
 
 	ReadInfoHandler(w, r)
 }
