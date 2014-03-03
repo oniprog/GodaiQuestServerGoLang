@@ -85,7 +85,7 @@ func Logout(client *network.Client) {
 	for index, elem := range mapClient {
 		if elem == client {
 
-			fmt.Printf("Logout %s(%d)\n", mapClientEmail[index], index )
+			fmt.Printf("Logout %s(%d)\n", mapClientEmail[index], index)
 			delete(mapClient, index)
 			delete(mapClientAccess, index)
 			delete(mapClientEmail, index)

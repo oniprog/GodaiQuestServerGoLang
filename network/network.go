@@ -8,7 +8,6 @@ import (
 	"github.com/oniprog/GodaiQuestServerGoLang/godaiquest"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"path"
 	"strconv"
 )
@@ -16,7 +15,7 @@ import (
 // 同期をとるためのオブジェクト
 var lock = make(chan int, 1)
 
-//
+// トップページへのリダイレクト
 func RedirectIndex(w http.ResponseWriter, r *http.Request, email string, message string) {
 
 	if len(message) > 0 {
@@ -24,6 +23,18 @@ func RedirectIndex(w http.ResponseWriter, r *http.Request, email string, message
 	} else {
 		http.Redirect(w, r, "/index?email="+email, http.StatusSeeOther)
 	}
+}
+
+// ログイントップへのリダイレクト
+func RedirectLogonTop(w http.ResponseWriter, r *http.Request, email string, message string) {
+
+	http.Redirect(w, r, "/list_user?message="+message, http.StatusSeeOther)
+}
+
+// ログイントップへのリダイレクト
+func RedirectInfoTop(w http.ResponseWriter, r *http.Request, email string, message string) {
+
+	http.Redirect(w, r, "/read_info?message="+message, http.StatusSeeOther)
 }
 
 // ログインを試みる
@@ -166,9 +177,9 @@ func GetItemInfoByUserId(client *Client, w http.ResponseWriter, r *http.Request,
 	lock <- 1
 	defer func() { <-lock }()
 
-	client.WriteDword( COM_GetItemInfoByUserId )
-	client.WriteDword( 1 )  // Version
-	client.WriteDword( userId )
+	client.WriteDword(COM_GetItemInfoByUserId)
+	client.WriteDword(1) // Version
+	client.WriteDword(userId)
 
 	okcode, err := client.ReadDword(nil)
 	if okcode != 1 {
@@ -177,56 +188,89 @@ func GetItemInfoByUserId(client *Client, w http.ResponseWriter, r *http.Request,
 
 	data, err := client.ReadProtoData(err)
 	retItemInfo := &godaiquest.ItemInfo{}
-	err = proto.Unmarshal( *data, retItemInfo )
+	err = proto.Unmarshal(*data, retItemInfo)
 	return retItemInfo, err
 }
 
+// ファイル情報格納
+type GodaiFileInfo struct {
+	Name string
+	PartPath string
+	Size int
+}
+
+// ファイル情報を得る
+func ReadDir(basedir string, dirpart string ) []GodaiFileInfo{
+
+	const MAX_FILE = 1000
+	retArray := make([]GodaiFileInfo, MAX_FILE ) // 1000個までしか扱わない
+	listFiles, _ := ioutil.ReadDir(path.Join(basedir, dirpart))
+	cnt := 0
+	for _, info := range listFiles {
+
+		if info.IsDir() {
+			retTmp := ReadDir(basedir, path.Join(dirpart, info.Name() ) )
+			for _, infoTmp := range retTmp {
+
+				if cnt >= MAX_FILE{
+					break
+				}
+				retArray[cnt] = infoTmp
+				cnt++
+			}
+		} else {
+			newFileInfo := GodaiFileInfo{ info.Name(), path.Join( dirpart, info.Name() ), int(info.Size()) }
+			if cnt >= MAX_FILE {
+				break
+			}
+			retArray[cnt] = newFileInfo
+			cnt++
+		}
+	}
+
+	return retArray[:cnt]
+}
+
 // アイテム詳細情報を得る
-func GetAItem(client *Client, w http.ResponseWriter, r *http.Request, infoId int) ([]os.FileInfo, error) {
+func GetAItem(client *Client, w http.ResponseWriter, r *http.Request, infoId int) ([]GodaiFileInfo, error) {
 
 	// ロックする
 	lock <- 1
 	defer func() { <-lock }()
 
 	// ダウンロードフォルダ
-	DownloadDir := path.Join( DownloadRoot, strconv.FormatUint(uint64(infoId), 10) )
+	DownloadDir := path.Join(DownloadRoot, strconv.FormatUint(uint64(infoId), 10))
 
 	// ファイル情報を得る
-	listFiles, err := ioutil.ReadDir( DownloadDir )
-
-	if err != nil {
-		fmt.Printf("Internal Error : ReadDir : %s\n", DownloadDir )
-		listFiles = make( []os.FileInfo, 0 )
-		err = nil
-	}
+	listFiles := ReadDir(DownloadDir, "")
 
 	//
-	client.WriteDword( COM_GetAItem )
-	client.WriteDword( 2 ) // version
-	client.WriteDword( infoId )
-	client.WriteFileInfo( listFiles, DownloadDir )
+	client.WriteDword(COM_GetAItem)
+	client.WriteDword(2) // version
+	client.WriteDword(infoId)
+	client.WriteFileInfo(listFiles, DownloadDir)
 
-	err = client.ReadFiles( DownloadDir, err )
+	err := client.ReadFiles(DownloadDir, nil)
 
 	//
-	listRetFiles, err := ioutil.ReadDir( DownloadDir )
-	
-	return listRetFiles, err 
+	listRetFiles := ReadDir(DownloadDir, "")
+
+	return listRetFiles, err
 }
 
 // アイテムを読んだことを記録する
-func ReadMarkAtArticle( client *Client, infoId int ) error {
+func ReadMarkAtArticle(client *Client, infoId int) error {
 
 	// ロックする
 	lock <- 1
 	defer func() { <-lock }()
 
-	client.WriteDword( COM_ReadArticle )
-	client.WriteDword( 1 ) // version
-	client.WriteDword( infoId )
-	client.WriteDword( client.UserId )
+	client.WriteDword(COM_ReadArticle)
+	client.WriteDword(1) // version
+	client.WriteDword(infoId)
+	client.WriteDword(client.UserId)
 
-	okcode, err := client.ReadDword( nil )
+	okcode, err := client.ReadDword(nil)
 	if okcode != 1 {
 		return errors.New("アイテムを読んだことを記録できませんでした")
 	}
@@ -237,17 +281,17 @@ func ReadMarkAtArticle( client *Client, infoId int ) error {
 }
 
 // 記事を読む
-func GetArticleString( client *Client, infoId int ) (string, error ) {
+func GetArticleString(client *Client, infoId int) (string, error) {
 
 	// ロックする
 	lock <- 1
 	defer func() { <-lock }()
 
-	client.WriteDword( COM_GetArticleString )
-	client.WriteDword( 1 ) // version
-	client.WriteDword( infoId )
-	
-	okcode, err := client.ReadDword( nil )
+	client.WriteDword(COM_GetArticleString)
+	client.WriteDword(1) // version
+	client.WriteDword(infoId)
+
+	okcode, err := client.ReadDword(nil)
 	if okcode != 1 {
 		return "", errors.New("記事への書き込みを読むことができませんでした")
 	}

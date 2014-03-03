@@ -2,6 +2,7 @@ package network
 
 import (
 	"bytes"
+	"compress/gzip"
 	"encoding/binary"
 	"errors"
 	"fmt"
@@ -10,7 +11,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"compress/gzip"
 )
 
 var Host string = ""
@@ -34,7 +34,7 @@ func Prepare(host string, downloadRoot string) error {
 	DownloadRoot = downloadRoot
 
 	os.Mkdir(DownloadRoot, 0700)
-	
+
 	return nil
 }
 
@@ -175,11 +175,11 @@ func (this *Client) ReadByte(err error) (byte, error) {
 }
 
 // 1バイト書き込む
-func (this* Client) WriteByte( data byte ) error {
+func (this *Client) WriteByte(data byte) error {
 
-	abyte := make([] byte, 1)
+	abyte := make([]byte, 1)
 	abyte[0] = data
-	_, err := this.Conn.Write( abyte )
+	_, err := this.Conn.Write(abyte)
 	return err
 }
 
@@ -187,19 +187,19 @@ func (this* Client) WriteByte( data byte ) error {
 func (this *Client) WriteLength(len int) {
 
 	if len < 0x10 {
-		this.WriteByte( byte(len) )
+		this.WriteByte(byte(len))
 	} else if len <= 0xFFF {
-		this.WriteByte( byte(len >> 8 | 0x10 ) )
-		this.WriteByte( byte(len & 0xff) )
+		this.WriteByte(byte(len>>8 | 0x10))
+		this.WriteByte(byte(len & 0xff))
 	} else if len <= 0xFFFFF {
-		this.WriteByte( byte(len >> 16 | 0x20 ) )
-		this.WriteByte( byte(len >> 8 & 0xff ) )
-		this.WriteByte( byte(len & 0xff ) )
+		this.WriteByte(byte(len>>16 | 0x20))
+		this.WriteByte(byte(len >> 8 & 0xff))
+		this.WriteByte(byte(len & 0xff))
 	} else {
-		this.WriteByte( byte(len >> 24 | 0x30 ) )
-		this.WriteByte( byte(len >> 16 & 0xff ) )
-		this.WriteByte( byte(len >> 8 & 0xff ) )
-		this.WriteByte( byte(len & 0xff ) )
+		this.WriteByte(byte(len>>24 | 0x30))
+		this.WriteByte(byte(len >> 16 & 0xff))
+		this.WriteByte(byte(len >> 8 & 0xff))
+		this.WriteByte(byte(len & 0xff))
 	}
 }
 
@@ -248,44 +248,45 @@ func (this *Client) EnsureReadByte(ensurebyte int) error {
 }
 
 // 文字列を書き込む
-func (this *Client) WriteString( str string ) error {
+func (this *Client) WriteString(str string) error {
 
-	this.WriteLength( len(str)+1 )
-	_, err := this.Conn.Write( []byte(str) )
-	this.Conn.Write( []byte{0} )
+	this.WriteLength(len(str) + 1)
+	_, err := this.Conn.Write([]byte(str))
+	this.Conn.Write([]byte{0})
 	return err
 }
 
 // 文字列を得る
-func (this *Client) ReadString( err error ) (string, error ) {
+func (this *Client) ReadString(err error) (string, error) {
 
 	if err != nil {
 		return "", err
 	}
 
 	strlength, err := this.ReadLength(nil)
-	data := make([] byte, strlength )
+	data := make([]byte, strlength)
 	err = this.EnsureReadByte(strlength)
 	this.Buffer.Read(data)
 
 	ret := BinaryUTF16ToString(data)
 	return ret, nil
 }
+
 // ファイル情報を送信する
-func (this *Client) WriteFileInfo( listFiles [] os.FileInfo, basedir string ) {
+func (this *Client) WriteFileInfo(listFiles []GodaiFileInfo, basedir string) {
 
 	for _, fileinfo := range listFiles {
 
-		this.WriteDword( int(fileinfo.Size() ) )
-		filerelpath, _ := filepath.Rel(basedir, fileinfo.Name() )
-		this.WriteString( filerelpath )
-		fmt.Printf("file info : %s\n", filerelpath )
+		this.WriteDword(fileinfo.Size)
+		filerelpath := fileinfo.PartPath
+		this.WriteString(filerelpath)
+		fmt.Printf("file info : %s\n", filerelpath)
 	}
-	this.WriteDword( -1 )
+	this.WriteDword(-1)
 }
 
 // バイナリを受信する
-func (this *Client) ReadBinary( err error ) ( []byte, error ) {
+func (this *Client) ReadBinary(err error) ([]byte, error) {
 
 	if err != nil {
 		return nil, err
@@ -294,14 +295,14 @@ func (this *Client) ReadBinary( err error ) ( []byte, error ) {
 	size, err := this.ReadLength(nil)
 
 	err = this.EnsureReadByte(size)
-	data := make([] byte, size )
+	data := make([]byte, size)
 	this.Buffer.Read(data)
 
 	return data, err
 }
 
 // ファイルを受信する
-func (this *Client) ReadFiles( basedir string, err error ) error {
+func (this *Client) ReadFiles(basedir string, err error) error {
 
 	if err != nil {
 		return err
@@ -318,14 +319,14 @@ func (this *Client) ReadFiles( basedir string, err error ) error {
 		}
 
 		filename, err := this.ReadString(err)
-		outputPath := path.Join( basedir, filepath.Clean(filename ) )
-		fmt.Printf("Receive file : %s -> %s\n", filename, outputPath )
+		outputPath := path.Join(basedir, filepath.Clean(filename))
+		fmt.Printf("Receive file : %s -> %s\n", filename, outputPath)
 
 		data, err := this.ReadBinary(err)
-		gzipReader, _:= gzip.NewReader( bytes.NewReader(data) )
-		fo, _:= os.Create( outputPath )
-		
-		buf := make([]byte, 10240 )
+		gzipReader, _ := gzip.NewReader(bytes.NewReader(data))
+		fo, _ := os.Create(outputPath)
+
+		buf := make([]byte, 10240)
 		for {
 			size, err := gzipReader.Read(buf)
 			if size == 0 {

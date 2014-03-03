@@ -1,26 +1,27 @@
 package handlers
 
 import (
-	"strings"
-	"strconv"
+	"github.com/oniprog/GodaiQuestServerGoLang/godaiquest"
 	"github.com/oniprog/GodaiQuestServerGoLang/network"
 	"github.com/oniprog/GodaiQuestServerGoLang/sessions"
 	"github.com/oniprog/GodaiQuestServerGoLang/template"
-	"github.com/oniprog/GodaiQuestServerGoLang/godaiquest"
 	"net/http"
+	"strconv"
+	"strings"
 )
 
 const pagesize = 10
 
 // 情報の一覧（未読だけ)
 func ListInfoHandler(w http.ResponseWriter, r *http.Request) {
-	
-	ListInfoHandlerCommon( false, w, r )
+
+	ListInfoHandlerCommon(false, w, r)
 }
+
 // 情報の一覧（全部)
 func ListInfoAllHandler(w http.ResponseWriter, r *http.Request) {
 
-	ListInfoHandlerCommon( true, w, r )
+	ListInfoHandlerCommon(true, w, r)
 }
 
 // 共通部分
@@ -40,7 +41,7 @@ func ListInfoHandlerCommon(all bool, w http.ResponseWriter, r *http.Request) {
 		dataTemp["message"] = queries["message"][0]
 	}
 	// 見るユーザ
-	viewId := client.UserId 
+	viewId := client.UserId
 	if len(queries["view_id"]) > 0 {
 		dataTemp["view_id"] = queries["view_id"][0]
 		viewId64, _ := strconv.ParseInt(queries["view_id"][0], 10, 0)
@@ -50,8 +51,8 @@ func ListInfoHandlerCommon(all bool, w http.ResponseWriter, r *http.Request) {
 	}
 	//
 	index := 0
-	if len(queries["index"])> 0 {
-		indexTmp, _ := strconv.ParseInt(queries["index"][0], 10, 0 )
+	if len(queries["index"]) > 0 {
+		indexTmp, _ := strconv.ParseInt(queries["index"][0], 10, 0)
 		index = int(indexTmp)
 	}
 	dataTemp["index"] = index
@@ -59,7 +60,7 @@ func ListInfoHandlerCommon(all bool, w http.ResponseWriter, r *http.Request) {
 	// すべてのユーザ情報の読み込み
 	userInfo, err := network.GetAllUserInfo(client, w, r)
 	if err != nil {
-		network.RedirectIndex(w, r, "", err.Error())
+		network.RedirectLogonTop(w, r, "", err.Error())
 		return
 	}
 
@@ -79,10 +80,10 @@ func ListInfoHandlerCommon(all bool, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 未読情報を取り出す
-	itemInfo, err := network.GetItemInfoByUserId(client, w, r, viewId )
+	itemInfo, err := network.GetItemInfoByUserId(client, w, r, viewId)
 
 	if err != nil {
-		network.RedirectIndex(w, r, "", err.Error())
+		network.RedirectLogonTop(w, r, "", err.Error())
 		return
 	}
 
@@ -91,9 +92,9 @@ func ListInfoHandlerCommon(all bool, w http.ResponseWriter, r *http.Request) {
 	for _, id := range mapUserUnread[viewId] {
 		mapUnread[int(id)] = 1
 	}
-		
+
 	// 可視化用に調整する
-	mapItem := make(map[int] *godaiquest.AItem)
+	mapItem := make(map[int]*godaiquest.AItem)
 	for i, aitemdic := range itemInfo.GetAitemDic() {
 
 		aitem := aitemdic.GetAitem()
@@ -102,12 +103,12 @@ func ListInfoHandlerCommon(all bool, w http.ResponseWriter, r *http.Request) {
 		if !ok && !all {
 			continue
 		}
-		if ( i < index ) {
+		if i < index {
 			dataTemp["before"] = 1
-		} else if ( i >= index && i <= index+pagesize ) {
+		} else if i >= index && i <= index+pagesize {
 			mapItem[i-index] = aitem
 			strHeader := *aitem.HeaderString + "\n\n\n\n\n\n"
-			newstr := strings.Join( strings.Split(strHeader, "\n")[0:5], "\n" )
+			newstr := strings.Join(strings.Split(strHeader, "\n")[0:5], "\n")
 			aitem.HeaderString = &newstr
 		} else {
 			dataTemp["after"] = 1
@@ -123,6 +124,3 @@ func ListInfoHandlerCommon(all bool, w http.ResponseWriter, r *http.Request) {
 		template.Execute("list_info", w, dataTemp)
 	}
 }
-
-
-

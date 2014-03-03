@@ -60,14 +60,16 @@ func makeNewRoute() {
 	// 情報
 	r.HandleFunc("/read_info", handlers.ReadInfoHandler)
 
+	// ファイルアップロード
+	r.HandleFunc("/upload_file", handlers.UploadFileHandler)
+
 	// ログアウト
-	r.HandleFunc("/logout", handlers.LogoutHandler )
+	r.HandleFunc("/logout", handlers.LogoutHandler)
 
 	http.Handle("/", r)
 }
 
 func main() {
-
 
 	// テンプレートの準備
 	err := template.Prepare(amberFolder, amberOptions)

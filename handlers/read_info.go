@@ -1,15 +1,14 @@
 package handlers
 
 import (
-//	"fmt"
+	//	"fmt"
 	"errors"
-	"strconv"
+	"github.com/oniprog/GodaiQuestServerGoLang/godaiquest"
 	"github.com/oniprog/GodaiQuestServerGoLang/network"
 	"github.com/oniprog/GodaiQuestServerGoLang/sessions"
 	"github.com/oniprog/GodaiQuestServerGoLang/template"
-	"github.com/oniprog/GodaiQuestServerGoLang/godaiquest"
 	"net/http"
-	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -30,7 +29,7 @@ func ReadInfoHandler(w http.ResponseWriter, r *http.Request) {
 		dataTemp["message"] = queries["message"][0]
 	}
 	// 見るユーザ
-	viewId := client.UserId 
+	viewId := client.UserId
 	if len(queries["view_id"]) > 0 {
 		dataTemp["view_id"] = queries["view_id"][0]
 		viewId64, _ := strconv.ParseInt(queries["view_id"][0], 10, 0)
@@ -48,21 +47,21 @@ func ReadInfoHandler(w http.ResponseWriter, r *http.Request) {
 		err = errors.New("見る情報の指定がありません")
 	}
 	if err != nil {
-		network.RedirectIndex(w, r, "", err.Error() )
+		network.RedirectIndex(w, r, "", err.Error())
 		return
 	}
 
-	dataTemp["user_id"] = strconv.FormatUint(uint64(client.UserId), 10 )
-	
+	dataTemp["user_id"] = strconv.FormatUint(uint64(client.UserId), 10)
+
 	// すべてのユーザ情報の読み込み
-/*	userInfo, err := network.GetAllUserInfo(client, w, r)
-	if err != nil {
-		network.RedirectIndex(w, r, "", err.Error())
-		return
-	}*/
+	/*	userInfo, err := network.GetAllUserInfo(client, w, r)
+		if err != nil {
+			network.RedirectIndex(w, r, "", err.Error())
+			return
+		}*/
 
 	// 情報を取り出す
-	itemInfo, err := network.GetItemInfoByUserId(client, w, r, viewId )
+	itemInfo, err := network.GetItemInfoByUserId(client, w, r, viewId)
 	if err != nil {
 		network.RedirectIndex(w, r, "", err.Error())
 		return
@@ -83,36 +82,35 @@ func ReadInfoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	dataTemp["aitem"] = curItem
-	
+
 	// アイテムの詳細情報を取り出す
-	listFiles, err := network.GetAItem( client, w, r, infoId)
+	listFiles, err := network.GetAItem(client, w, r, infoId)
 
 	// 表示用に整形
-	mapFiles := make(map[string] interface{})
+	mapFiles := make(map[string]interface{})
 	for _, fileinfo := range listFiles {
 
-		mapAFile := make(map[string] interface{})
-		filepath, _ := filepath.Rel( network.DownloadRoot,  fileinfo.Name() )
+		mapAFile := make(map[string]interface{})
+		filepath := fileinfo.PartPath
 		mapAFile["Path"] = filepath
-		if strings.HasSuffix( filepath, ".jpg" ) || strings.HasSuffix( filepath, ".png" ) {
+		if strings.HasSuffix(filepath, ".jpg") || strings.HasSuffix(filepath, ".png") {
 			mapAFile["ImagePath"] = filepath
 		} else {
 			mapAFile["ImagePath"] = ""
 		}
-		
+
 		mapFiles[filepath] = mapAFile
 	}
 	dataTemp["listFiles"] = mapFiles
-	
+
 	// 読んだことにする
-	network.ReadMarkAtArticle( client, infoId )
+	network.ReadMarkAtArticle(client, infoId)
 
 	// 記事の内容を読む
-	articleContent, err := network.GetArticleString( client, infoId )
+	articleContent, err := network.GetArticleString(client, infoId)
 
 	dataTemp["article_content"] = articleContent
 
-	
 	if err != nil {
 		network.RedirectIndex(w, r, "", err.Error())
 		return
@@ -120,4 +118,3 @@ func ReadInfoHandler(w http.ResponseWriter, r *http.Request) {
 	// レンダリング
 	template.Execute("read_info", w, dataTemp)
 }
-
