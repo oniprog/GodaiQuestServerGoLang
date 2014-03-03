@@ -5,6 +5,7 @@ import (
 	"unicode/utf8"
 )
 
+// utf8バイナリを文字列に変換
 func BinaryUTF8ToString(data []byte) string {
 
 	ret := ""
@@ -16,6 +17,7 @@ func BinaryUTF8ToString(data []byte) string {
 	return ret
 }
 
+// utf16バイナリを文字列に変換
 func BinaryUTF16ToString(data []byte) string {
 
 	data16 := make([]uint16, len(data)/2)
@@ -30,3 +32,33 @@ func BinaryUTF16ToString(data []byte) string {
 	}
 	return ret
 }
+
+// 文字列をutf16バイナリに変換
+func StringToBinaryUTF16( str string ) [] byte {
+	
+	runes := make([]rune, len(str) )
+	cnt := 0
+	for _, rune := range str {
+		runes[cnt] = rune
+		cnt++
+	}
+	words := utf16.Encode( runes[:cnt] )
+
+	bytedata := make([]byte, len(words)*2 )
+	for i, word := range words {
+		bytedata[i*2+0] = byte(word & 0xff)
+		bytedata[i*2+1] = byte(word >> 8)
+	}
+	return bytedata
+}
+
+
+
+
+
+
+
+
+
+
+

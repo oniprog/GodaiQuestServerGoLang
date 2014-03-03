@@ -250,8 +250,10 @@ func (this *Client) EnsureReadByte(ensurebyte int) error {
 // 文字列を書き込む
 func (this *Client) WriteString(str string) error {
 
-	this.WriteLength(len(str) + 1)
-	_, err := this.Conn.Write([]byte(str))
+	data := StringToBinaryUTF16(str) 
+	this.WriteLength(len(data) + 1 )
+	
+	_, err := this.Conn.Write( data )
 	this.Conn.Write([]byte{0})
 	return err
 }

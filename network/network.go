@@ -302,3 +302,34 @@ func GetArticleString(client *Client, infoId int) (string, error) {
 	ret, err := client.ReadString(err)
 	return ret, err
 }
+
+// アイテム内の記事の書き込み
+func SetItemArticle( client *Client, infoId int, articleId int, userId int, contents string ) error {
+
+	// ロックする
+	lock <- 1
+	defer func() { <-lock }()
+	
+	client.WriteDword( COM_SetItemArticle )
+	client.WriteDword( 1 ) // version
+
+	itemArticle := &godaiquest.ItemArticle{
+		ItemId : proto.Int32( int32(infoId) ),
+		ArticleId : proto.Int32( int32(articleId) ),
+		UserId : proto.Int32( int32(userId) ),
+		Contents : proto.String( contents ),
+		CretaeTime : proto.Int64(0),
+	}
+	data, err := proto.Marshal( itemArticle )
+	client.WriteProtoData( &data )
+
+	okcode, err := client.ReadDword(nil)
+	if err != nil {
+		return err
+	}
+	if okcode != 1 {
+		return errors.New("記事の書き込みに失敗しました")
+	}
+
+	return nil
+}

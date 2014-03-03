@@ -60,6 +60,9 @@ func makeNewRoute() {
 	// 情報
 	r.HandleFunc("/read_info", handlers.ReadInfoHandler)
 
+	// 情報内の記事の投稿
+	r.HandleFunc("/write_article", handlers.WriteArticleHandler )
+	
 	// ファイル
 	r.HandleFunc("/upload_file", handlers.UploadFileHandler)
 	r.HandleFunc("/delete_file", handlers.DeleteFileHandler)
