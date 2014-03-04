@@ -304,24 +304,24 @@ func GetArticleString(client *Client, infoId int) (string, error) {
 }
 
 // アイテム内の記事の書き込み
-func SetItemArticle( client *Client, infoId int, articleId int, userId int, contents string ) error {
+func SetItemArticle(client *Client, infoId int, articleId int, userId int, contents string) error {
 
 	// ロックする
 	lock <- 1
 	defer func() { <-lock }()
-	
-	client.WriteDword( COM_SetItemArticle )
-	client.WriteDword( 1 ) // version
+
+	client.WriteDword(COM_SetItemArticle)
+	client.WriteDword(1) // version
 
 	itemArticle := &godaiquest.ItemArticle{
-		ItemId : proto.Int32( int32(infoId) ),
-		ArticleId : proto.Int32( int32(articleId) ),
-		UserId : proto.Int32( int32(userId) ),
-		Contents : proto.String( contents ),
-		CretaeTime : proto.Int64(0),
+		ItemId:     proto.Int32(int32(infoId)),
+		ArticleId:  proto.Int32(int32(articleId)),
+		UserId:     proto.Int32(int32(userId)),
+		Contents:   proto.String(contents),
+		CretaeTime: proto.Int64(0),
 	}
-	data, err := proto.Marshal( itemArticle )
-	client.WriteProtoData( &data )
+	data, err := proto.Marshal(itemArticle)
+	client.WriteProtoData(&data)
 
 	okcode, err := client.ReadDword(nil)
 	if err != nil {
@@ -329,6 +329,29 @@ func SetItemArticle( client *Client, infoId int, articleId int, userId int, cont
 	}
 	if okcode != 1 {
 		return errors.New("記事の書き込みに失敗しました")
+	}
+
+	return nil
+}
+
+// アイテム内の記事の削除
+func DeleteLastItemAritcle(client *Client, infoId int) error {
+
+	// ロックする
+	lock <- 1
+	defer func() { <-lock }()
+
+	//
+	client.WriteDword( COM_DeleteLastItemArticle )
+	client.WriteDword(1) // version
+	client.WriteDword(infoId)
+	
+	okcode, err := client.ReadDword( nil )
+	if err != nil {
+		return err
+	}
+	if okcode != 1 {
+		return errors.New("情報内の記事の削除に失敗しました")
 	}
 
 	return nil

@@ -22,7 +22,7 @@ block content
         input[type="submit"][style="width:300px"][value="投稿"]
     div
       br
-      form[action=unescaped("delete_article?view_id="+view_id+"&info_id="+info_id)][method="post"]
+      form[action=unescaped("delete_last_article?view_id="+view_id+"&info_id="+info_id)][method="post"]
         input[type="submit"][value="最後の投稿を削除"][style="height:100px"]
 
   if listFiles && len(listFiles) > 0

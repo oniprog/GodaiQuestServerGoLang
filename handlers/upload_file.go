@@ -12,7 +12,7 @@ import (
 	"strconv"
 )
 
-//  情報を読む
+// ファイルのアップロード
 func UploadFileHandler(w http.ResponseWriter, r *http.Request) {
 
 	// ログインチェック

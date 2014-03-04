@@ -8,8 +8,8 @@ import (
 	"strconv"
 )
 
-// 情報内の記事の投稿
-func WriteArticleHandler(w http.ResponseWriter, r *http.Request) {
+// 最後の記事の削除
+func DeleteLastAritcleHandler(w http.ResponseWriter, r *http.Request) {
 
 	// ログインチェック
 	client, err := sessions.GetClient(w, r)
@@ -31,19 +31,17 @@ func WriteArticleHandler(w http.ResponseWriter, r *http.Request) {
 		infoId64, _ := strconv.ParseInt(queries["info_id"][0], 10, 0)
 		infoId = int(infoId64)
 	} else {
-		err = errors.New("書き込む情報の指定がありません")
+		err = errors.New("削除する対象の情報の指定がありません")
 		network.RedirectInfoTop(w, r, "", err.Error())
 		return
 	}
 
-	// 書き込む内容
-	contents := r.PostFormValue("inputtext")
-
-	err = network.SetItemArticle(client, infoId, 0, client.UserId, contents)
+	// 削除実行
+	err = network.DeleteLastItemAritcle( client, infoId )
 	if err != nil {
 		network.RedirectInfoTop(w, r, "", err.Error())
 		return
-	}
+	}	
 
 	ReadInfoHandler(w, r)
 }
