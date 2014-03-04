@@ -356,3 +356,34 @@ func DeleteLastItemAritcle(client *Client, infoId int) error {
 
 	return nil
 }
+
+// 記事の内容書き込み
+func ChangeAItem(client *Client, infoId int, imageId int, newText string ) error {
+
+	// ロックする
+	lock <- 1
+	defer func() { <-lock }()
+	
+	//
+	client.WriteDword( COM_ChangeAItem )
+	client.WriteDword( 1 ) // version
+
+	aitem := &godaiquest.AItem{
+		ItemId : proto.Int32( int32(infoId) ),
+		ItemImageId : proto.Int32( int32(imageId) ),
+		HeaderString : proto.String(newText),
+		BNew : proto.Bool(false),
+	}
+
+	data, err := proto.Marshal( aitem )
+	client.WriteProtoData( &data )
+
+	okcode, err := client.ReadDword( err )
+	if err != nil {
+		return err
+	}
+	if okcode != 1 {
+		return errors.New("情報の変更に失敗しました")
+	}
+	return nil
+}

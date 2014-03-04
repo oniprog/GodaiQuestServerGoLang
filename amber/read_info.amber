@@ -4,14 +4,14 @@ block title
   | Godai Quest Info
 
 block content
-  h2 情報 &nbsp; &nbsp;
-    if user_id == view_id
-      a.small[href="modify_info?info_id="+info_id] 記事を変更する &nbsp; &nbsp;
-    a.small[href="list_info?view_id="+view_id] 戻る
-
   $view_id = view_id
   $info_id = info_id
   $user_id = user_id
+  h2 情報 &nbsp; &nbsp;
+    if user_id == view_id
+      a.small[href=unescaped("modify_info?info_id="+$info_id+"&view_id="+$view_id)] 記事を変更する &nbsp; &nbsp;
+    a.small[href="list_info?view_id="+view_id] 戻る
+
   div.hbox
     div.boxbox.text.monospace #{article_content}
     div[style="text-shadow:1px 1px 1px #0000ff"] #### 投稿内容を書いてください ####
