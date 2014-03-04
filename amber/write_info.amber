@@ -1,0 +1,20 @@
+extends layout
+
+block title
+  | Godai Quest Write Info
+
+block content
+  $rest_item_cnt = rest_item_cnt
+  $view_id = view_id
+  
+  h2 投稿する記事を書いてください
+    span.small &nbsp; &nbsp; 記事をかける数:#{$rest_item_cnt} &nbsp; &nbsp;
+    a.small[href="list_user"] 戻る
+
+  form[action=unescaped("write_info")][method="post"]
+    div.box
+      textarea[rows="40"][cols="90"][name="inputtext"] #{content}
+    div.box2
+      | ファイルのアップロードは、記事のページからあとで行ってください
+    input[type="reset"]
+    input[type="submit"][value="投稿する"][style="width:400px"]

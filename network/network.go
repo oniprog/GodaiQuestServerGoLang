@@ -342,11 +342,11 @@ func DeleteLastItemAritcle(client *Client, infoId int) error {
 	defer func() { <-lock }()
 
 	//
-	client.WriteDword( COM_DeleteLastItemArticle )
+	client.WriteDword(COM_DeleteLastItemArticle)
 	client.WriteDword(1) // version
 	client.WriteDword(infoId)
-	
-	okcode, err := client.ReadDword( nil )
+
+	okcode, err := client.ReadDword(nil)
 	if err != nil {
 		return err
 	}
@@ -358,27 +358,27 @@ func DeleteLastItemAritcle(client *Client, infoId int) error {
 }
 
 // 記事の内容書き込み
-func ChangeAItem(client *Client, infoId int, imageId int, newText string ) error {
+func ChangeAItem(client *Client, infoId int, imageId int, newText string) error {
 
 	// ロックする
 	lock <- 1
 	defer func() { <-lock }()
-	
+
 	//
-	client.WriteDword( COM_ChangeAItem )
-	client.WriteDword( 1 ) // version
+	client.WriteDword(COM_ChangeAItem)
+	client.WriteDword(1) // version
 
 	aitem := &godaiquest.AItem{
-		ItemId : proto.Int32( int32(infoId) ),
-		ItemImageId : proto.Int32( int32(imageId) ),
-		HeaderString : proto.String(newText),
-		BNew : proto.Bool(false),
+		ItemId:       proto.Int32(int32(infoId)),
+		ItemImageId:  proto.Int32(int32(imageId)),
+		HeaderString: proto.String(newText),
+		BNew:         proto.Bool(false),
 	}
 
-	data, err := proto.Marshal( aitem )
-	client.WriteProtoData( &data )
+	data, err := proto.Marshal(aitem)
+	client.WriteProtoData(&data)
 
-	okcode, err := client.ReadDword( err )
+	okcode, err := client.ReadDword(err)
 	if err != nil {
 		return err
 	}
@@ -386,4 +386,267 @@ func ChangeAItem(client *Client, infoId int, imageId int, newText string ) error
 		return errors.New("情報の変更に失敗しました")
 	}
 	return nil
+}
+
+// オブジェクトの情報を得る
+func GetObjectAttrInfo(client *Client) (*godaiquest.ObjectAttrInfo, error) {
+
+	// ロックする
+	lock <- 1
+	defer func() { <-lock }()
+
+	client.WriteDword(COM_GetObjectAttrInfo)
+	client.WriteDword(1) // version
+
+	okcode, err := client.ReadDword(nil)
+	if err != nil {
+		return nil, err
+	}
+	if okcode != 1 {
+		return nil, errors.New("オブジェクト情報の取得に失敗しました")
+	}
+
+	data, err := client.ReadProtoData(err)
+	objectAttrInfo := &godaiquest.ObjectAttrInfo{}
+	err = proto.Unmarshal(*data, objectAttrInfo)
+	return objectAttrInfo, err
+}
+
+// イメージブロックを得る
+func GetDungeonImageBlock(client *Client) (*godaiquest.DungeonBlockImageInfo, error) {
+
+	// ロックする
+	lock <- 1
+	defer func() { <-lock }()
+
+	client.WriteDword(COM_GetDungeonBlockImage)
+	client.WriteDword(1) // version
+
+	okcode, err := client.ReadDword(nil)
+	if err != nil {
+		return nil, err
+	}
+	if okcode != 1 {
+		return nil, errors.New("イメージ情報の取得に失敗しました")
+	}
+
+	data, err := client.ReadProtoData(err)
+	dungeonImagesInfo := &godaiquest.DungeonBlockImageInfo{}
+	err = proto.Unmarshal(*data, dungeonImagesInfo)
+	return dungeonImagesInfo, err
+}
+
+// タイルイメージを得る
+func GetTileList(client *Client) (*godaiquest.TileInfo, error) {
+
+	// ロックする
+	lock <- 1
+	defer func() { <-lock }()
+
+	//
+	client.WriteDword(COM_GetTileList)
+	client.WriteDword(1)
+
+	okcode, err := client.ReadDword(nil)
+	if err != nil {
+		return nil, err
+	}
+	if okcode != 1 {
+		return nil, errors.New("タイル情報の取得に失敗しました")
+	}
+
+	data, err := client.ReadProtoData(err)
+	tileList := &godaiquest.TileInfo{}
+	err = proto.Unmarshal(*data, tileList)
+	return tileList, err
+}
+
+// ダンジョンの情報を得る
+func GetDugeon(client *Client, dungeonId int, level int) (*godaiquest.DungeonInfo, error) {
+
+	// ロックする
+	lock <- 1
+	defer func() { <-lock }()
+
+	//
+	client.WriteDword(COM_GetDungeon)
+	client.WriteDword(1)
+
+	getDugeon := &godaiquest.GetDungeon{
+		Id:            proto.Int32(int32(dungeonId)),
+		DungeonNumber: proto.Int32(int32(level)),
+	}
+	data1, err := proto.Marshal(getDugeon)
+	client.WriteProtoData(&data1)
+
+	okcode, err := client.ReadDword(nil)
+	if err != nil {
+		return nil, err
+	}
+	if okcode != 1 {
+		return nil, errors.New("ダンジョンの取得に失敗しました")
+	}
+
+	data2, err := client.ReadProtoData(nil)
+	dungeonInfo := &godaiquest.DungeonInfo{}
+	err = proto.Unmarshal(*data2, dungeonInfo)
+
+	return dungeonInfo, err
+}
+
+// 大陸の自分の領地のある範囲
+func GetIslandGroundInfoByUser(client *Client, userId int) (*godaiquest.IslandGround, error) {
+
+	// ロックする
+	lock <- 1
+	defer func() { <-lock }()
+
+	//
+	client.WriteDword(COM_GetIslandGroundInfo)
+	client.WriteDword(1)
+
+	okcode, err := client.ReadDword(nil)
+	if err != nil {
+		return nil, err
+	}
+	if okcode != 1 {
+		return nil, errors.New("大陸土地情報の取得に失敗しました")
+	}
+
+	data, err := client.ReadProtoData(err)
+	islandGroundInfo := &godaiquest.IslandGroundInfo{}
+	err = proto.Unmarshal(*data, islandGroundInfo)
+
+	// 自分の土地を検索する
+	for _, islandGround := range islandGroundInfo.GetGroundList() {
+
+		if int(islandGround.GetUserId()) == userId {
+			return islandGround, nil
+		}
+	}
+
+	return nil, errors.New("自分の土地がありませんでした")
+}
+
+// ダンジョンを設定する
+func SetDungeon(client *Client, newdungeon *godaiquest.SetDungeon) error {
+
+	// ロックする
+	lock <- 1
+	defer func() { <-lock }()
+
+	//
+	client.WriteDword(COM_SetDungeon)
+	client.WriteDword(1) // version
+
+	data, err := proto.Marshal(newdungeon)
+	client.WriteProtoData(&data)
+
+	if err != nil {
+		fmt.Printf("Internal Error : %s\n", err.Error())
+	}
+
+	okcode, err := client.ReadDword(nil)
+	if err != nil {
+		return err
+	}
+	if okcode != 1 {
+		return errors.New("ダンジョンの更新に失敗しました")
+	}
+
+	return nil
+}
+
+// アイテムを登録する
+func SetAItem(client *Client, newItem *godaiquest.AItem, newImagePair *godaiquest.ImagePair) (*godaiquest.AItem, error) {
+
+	// ロックする
+	lock <- 1
+	defer func() { <-lock }()
+
+	//
+	client.WriteDword(COM_SetAItem)
+	client.WriteDword(1) // version
+
+	data1, err := proto.Marshal(newItem)
+	if err != nil {
+		fmt.Printf("Internal Error : %s\n", err.Error())
+	}
+	data2, err := proto.Marshal(newImagePair)
+	if err != nil {
+		fmt.Printf("Internal Error : %s\n", err.Error())
+	}
+	client.WriteProtoData(&data1)
+	client.WriteProtoData(&data2)
+
+	okcode, err := client.ReadDword(nil)
+	if err != nil {
+		return nil, err
+	}
+	if okcode != 1 {
+		return nil, errors.New("アイテムの更新に失敗しました")
+	}
+
+	// ファイルの送信だけれども
+	client.WriteByte(0)
+
+	// アイテムを受信する
+	data3, err := client.ReadProtoData(nil)
+	aitem := &godaiquest.AItem{}
+	err = proto.Unmarshal(*data3, aitem)
+	return aitem, err
+}
+
+// アイテムを新規作成する
+// objectAttrInfoが更新されるので注意。SetDungeonで書き込む必要がある
+func CreateAItem(client *Client, objectAttrInfo *godaiquest.ObjectAttrInfo, imagePair *godaiquest.ImagePair, itemContents string) (*godaiquest.AItem, error) {
+
+	newImagePair := &godaiquest.ImagePair{
+		Number:       proto.Int32(imagePair.GetNumber()),
+		Image:        imagePair.GetImage(),
+		Name:         proto.String(imagePair.GetName()),
+		Owner:        proto.Int32(imagePair.GetOwner()),
+		Created:      proto.Int64(0),
+		CanItemImage: proto.Bool(true),
+		NewImage:     proto.Bool(false),
+	}
+
+	newAItem := &godaiquest.AItem{
+		ItemId:       proto.Int32(0),
+		ItemImageId:  proto.Int32(imagePair.GetNumber()),
+		HeaderString: proto.String(itemContents),
+		HeaderImage:  nil,
+		BNew:         proto.Bool(true),
+	}
+
+	aitem, err := SetAItem(client, newAItem, newImagePair)
+	if err != nil {
+		return nil, err
+	}
+
+	// 新しいObjectIdを得る
+	(*objectAttrInfo.NewId)++
+	newId := *objectAttrInfo.NewId
+
+	objectAttr := &godaiquest.ObjectAttr{
+		ObjectId:   proto.Int32(newId),
+		CanWalk:    proto.Bool(true),
+		ItemId:     proto.Int32(aitem.GetItemId()),
+		BNew:       proto.Bool(true),
+		Command:    proto.Int32(int32(COMMAND_Nothing)),
+		CommandSub: proto.Int32(0),
+	}
+	newObjectAttrDic := &godaiquest.ObjectAttrDic{
+		Index:      proto.Int32(newId),
+		ObjectAttr: objectAttr,
+	}
+
+	newdic := make([]*godaiquest.ObjectAttrDic, len(objectAttrInfo.ObjectAttrDic)+1)
+	for i, dic := range objectAttrInfo.ObjectAttrDic {
+		newdic[i] = dic
+	}
+	newdic[len(objectAttrInfo.ObjectAttrDic)] = newObjectAttrDic
+	objectAttrInfo.ObjectAttrDic = newdic
+
+	return aitem, err
 }

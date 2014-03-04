@@ -2,16 +2,16 @@ package handlers
 
 import (
 	"errors"
+	"github.com/oniprog/GodaiQuestServerGoLang/godaiquest"
 	"github.com/oniprog/GodaiQuestServerGoLang/network"
 	"github.com/oniprog/GodaiQuestServerGoLang/sessions"
-	"github.com/oniprog/GodaiQuestServerGoLang/godaiquest"
 	"github.com/oniprog/GodaiQuestServerGoLang/template"
 	"net/http"
 	"strconv"
 )
 
 // 記事の修正
-func ModifyArticleHandler(w http.ResponseWriter, r *http.Request) {
+func ModifyInfoHandler(w http.ResponseWriter, r *http.Request) {
 
 	// ログインチェック
 	client, err := sessions.GetClient(w, r)
@@ -50,7 +50,7 @@ func ModifyArticleHandler(w http.ResponseWriter, r *http.Request) {
 	// 情報を取り出す
 	itemInfo, err := network.GetItemInfoByUserId(client, w, r, viewId)
 	if err != nil {
-		network.RedirectIndex(w, r, "", err.Error())
+		network.RedirectInfoTop(w, r, "", err.Error())
 		return
 	}
 	var curItem *godaiquest.AItem
@@ -65,7 +65,7 @@ func ModifyArticleHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if curItem == nil {
-		network.RedirectIndex(w, r, "", "対象の情報がありません")
+		network.RedirectInfoTop(w, r, "", "対象の情報がありません")
 		return
 	}
 	dataTemp["aitem"] = curItem
@@ -76,7 +76,7 @@ func ModifyArticleHandler(w http.ResponseWriter, r *http.Request) {
 		// 書き込み内容
 		newText := r.PostFormValue("inputtext")
 		// 記事の書き込み
-		network.ChangeAItem( client, int(curItem.GetItemId()), int(curItem.GetItemImageId()), newText )
+		network.ChangeAItem(client, int(curItem.GetItemId()), int(curItem.GetItemImageId()), newText)
 
 		ReadInfoHandler(w, r)
 	} else {

@@ -59,7 +59,8 @@ func makeNewRoute() {
 
 	// 情報
 	r.HandleFunc("/read_info", handlers.ReadInfoHandler)
-	r.HandleFunc("/modify_info", handlers.ModifyArticleHandler )
+	r.HandleFunc("/modify_info", handlers.ModifyInfoHandler)
+	r.HandleFunc("/write_info", handlers.WriteInfoHandler)
 
 	// 情報内の記事
 	r.HandleFunc("/write_article", handlers.WriteArticleHandler)

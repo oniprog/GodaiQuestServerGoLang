@@ -37,11 +37,11 @@ func DeleteLastAritcleHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 削除実行
-	err = network.DeleteLastItemAritcle( client, infoId )
+	err = network.DeleteLastItemAritcle(client, infoId)
 	if err != nil {
 		network.RedirectInfoTop(w, r, "", err.Error())
 		return
-	}	
+	}
 
 	ReadInfoHandler(w, r)
 }

@@ -50,12 +50,11 @@ func ListInfoHandlerCommon(all bool, w http.ResponseWriter, r *http.Request) {
 		dataTemp["view_id"] = string(client.UserId)
 	}
 	//
-	index := 0
+	index := -1
 	if len(queries["index"]) > 0 {
 		indexTmp, _ := strconv.ParseInt(queries["index"][0], 10, 0)
 		index = int(indexTmp)
 	}
-	dataTemp["index"] = index
 
 	// すべてのユーザ情報の読み込み
 	userInfo, err := network.GetAllUserInfo(client, w, r)
@@ -95,6 +94,24 @@ func ListInfoHandlerCommon(all bool, w http.ResponseWriter, r *http.Request) {
 
 	// 可視化用に調整する
 	mapItem := make(map[int]*godaiquest.AItem)
+	cntItem := 0
+	for _, aitemdic := range itemInfo.GetAitemDic() {
+
+		aitem := aitemdic.GetAitem()
+		itemId := int(aitem.GetItemId())
+		_, ok := mapUnread[itemId]
+		if !ok && !all {
+			continue
+		}
+		cntItem++
+	}
+	if index < 0 {
+		index = cntItem - pagesize
+	}
+	if index < 0 {
+		index = 0
+	}
+
 	for i, aitemdic := range itemInfo.GetAitemDic() {
 
 		aitem := aitemdic.GetAitem()
@@ -114,6 +131,8 @@ func ListInfoHandlerCommon(all bool, w http.ResponseWriter, r *http.Request) {
 			dataTemp["after"] = 1
 		}
 	}
+	dataTemp["index"] = index
+
 	dataTemp["itemlist"] = mapItem
 	dataTemp["pagesize"] = pagesize
 
