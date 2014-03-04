@@ -327,21 +327,7 @@ func (this *Client) ReadFiles(basedir string, err error) error {
 		data, err := this.ReadBinary(err)
 		gzipReader, _ := gzip.NewReader(bytes.NewReader(data))
 		fo, _ := os.Create(outputPath)
-
-		buf := make([]byte, 10240)
-		for {
-			size, err := gzipReader.Read(buf)
-			if size == 0 {
-				break
-			}
-			if err != nil {
-				gzipReader.Close()
-				fo.Close()
-				return err
-			}
-			fo.Write(buf[:size])
-		}
-
+		io.Copy( fo, gzipReader )
 		gzipReader.Close()
 		fo.Close()
 	}
