@@ -4,6 +4,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/eknkc/amber"
 	"github.com/gorilla/mux"
@@ -21,9 +22,26 @@ const amberFolder = "./amber"
 
 var amberOptions = amber.Options{PrettyPrint: false, LineNumbers: false}
 
-const secretString = "godaiquest"
-const serverAddr = "localhost:21014"
 const downloadRoot = "public/download"
+
+type Configuration struct {
+	ServerAddr string
+	Secret     string
+}
+
+// 設定ファイルの読み込み
+func readConfig() (*Configuration, error) {
+
+	file, err := os.Open("config.json")
+	if err != nil {
+		return nil, err
+	}
+	decoder := json.NewDecoder(file)
+	configuration := &Configuration{}
+	decoder.Decode(&configuration)
+
+	return configuration, nil
+}
 
 // ファイルを返すだけのハンドラ
 func fileHandler(w http.ResponseWriter, r *http.Request) {
@@ -81,22 +99,29 @@ func makeNewRoute() {
 
 func main() {
 
+	//
+	config, err := readConfig()
+	if err != nil {
+		fmt.Printf("Configuration read fail : " + err.Error())
+		os.Exit(1)
+	}
+
 	// テンプレートの準備
-	err := template.Prepare(amberFolder, amberOptions)
+	err = template.Prepare(amberFolder, amberOptions)
 	if err != nil {
 		fmt.Printf("template compile error\n")
 		os.Exit(1)
 	}
 
 	// ネットワークの初期化
-	err = network.Prepare(serverAddr, downloadRoot)
+	err = network.Prepare(config.ServerAddr, downloadRoot)
 	if err != nil {
 		fmt.Printf("network initialization error\n")
 		os.Exit(1)
 	}
 
 	// セッションの準備
-	err = sessions.Prepare(secretString)
+	err = sessions.Prepare(config.Secret)
 	if err != nil {
 		fmt.Printf("sessions error\n")
 		os.Exit(1)
