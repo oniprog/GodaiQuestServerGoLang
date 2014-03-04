@@ -70,6 +70,9 @@ func makeNewRoute() {
 	r.HandleFunc("/upload_file", handlers.UploadFileHandler)
 	r.HandleFunc("/delete_file", handlers.DeleteFileHandler)
 
+	// ユーザ登録
+	r.HandleFunc("/register_user", handlers.RegisterUserHandler )
+
 	// ログアウト
 	r.HandleFunc("/logout", handlers.LogoutHandler)
 

@@ -1,0 +1,23 @@
+extends layout
+
+block title
+  | Godai Quest login page
+
+block content
+  h2 ユーザ登録 &nbsp; &nbsp;
+    A.small[href="index"] 戻る
+  
+  form[action="register_user"][method="post"][enctype="multipart/form-data"]
+    p キャラクタ名: 
+      input[type="text"][name="username"][size="20"]
+    p email:　　　
+      input[type="text"][name="email"][size="60"]
+    p password:　
+      input[type="password"][name="password"][size="60"]
+    p 登録画像
+      input[type="file"][name="image"]
+    
+    h3 イメージは必ず必要です！
+    
+    input[type="reset"][value="リセット"]
+    input[type="submit"][value="登録をする"]

@@ -37,17 +37,10 @@ func RedirectInfoTop(w http.ResponseWriter, r *http.Request, email string, messa
 	http.Redirect(w, r, "/read_info?message="+message, http.StatusSeeOther)
 }
 
-// ログインを試みる
-func TryLogon(w http.ResponseWriter, r *http.Request) *Client {
+//サーバーとの接続
+func ConnectServer(w http.ResponseWriter, r *http.Request, email string) *Client {
 
-	// ロックする
-	lock <- 1
-	defer func() { <-lock }()
-
-	//
-	email := r.PostFormValue("email")
-	password := r.PostFormValue("password")
-
+	// サーバとの接続
 	conn, err := Connect()
 	if err != nil {
 		fmt.Printf("%s\n", err.Error())
@@ -67,6 +60,24 @@ func TryLogon(w http.ResponseWriter, r *http.Request) *Client {
 		fmt.Printf("%d\n", okcode)
 		RedirectIndex(w, r, email, "サーバーとの接続に失敗しました")
 		client.Close()
+		return nil
+	}
+
+	return client
+}
+// ログインを試みる
+func TryLogon(w http.ResponseWriter, r *http.Request) *Client {
+
+	// ロックする
+	lock <- 1
+	defer func() { <-lock }()
+
+	//
+	email := r.PostFormValue("email")
+	password := r.PostFormValue("password")
+
+	client := ConnectServer( w, r, email )
+	if client == nil {
 		return nil
 	}
 
@@ -92,7 +103,7 @@ func TryLogon(w http.ResponseWriter, r *http.Request) *Client {
 	data, err := proto.Marshal(login)
 	client.WriteProtoData(&data)
 
-	okcode, err = client.ReadDword(err)
+	okcode, err := client.ReadDword(err)
 	switch okcode {
 	case 1:
 		// ログイン成功
@@ -650,3 +661,48 @@ func CreateAItem(client *Client, objectAttrInfo *godaiquest.ObjectAttrInfo, imag
 
 	return aitem, err
 }
+
+// ユーザの追加
+func AddUser( w http.ResponseWriter, r *http.Request, email string, password string, name string, imgbyte []byte, clientAddress string ) error {
+
+	client := ConnectServer( w, r, email )
+	if client == nil {
+		return nil
+	}
+
+	defer client.Close()
+
+	hasher := sha512.New()
+	hasher.Write([]byte(password))
+	passwordHash := fmt.Sprintf("%x", hasher.Sum(nil))
+
+	client.WriteDword( COM_AddUser )
+	client.WriteDword( 1 )
+
+	newUser := &godaiquest.AddUser{
+		MailAddress : proto.String( email ),
+		UserName : proto.String( name ),
+		Password : proto.String( passwordHash ),
+		UserFolder : proto.String( "c:\\tmp\\godaiquest" ),
+		ComputerName : proto.String(clientAddress),
+		UserImage : imgbyte,
+	}
+	data, err := proto.Marshal( newUser )	
+	client.WriteProtoData( &data )
+
+	okcode, err := client.ReadDword(nil)
+	if err != nil {
+		return err
+	}
+	switch(okcode) {
+
+	case 2: return errors.New("既に同じユーザが存在します")
+	case 1: return nil
+	default: return errors.New("ユーザ登録エラーです")
+	}
+}
+
+
+
+
+
