@@ -71,7 +71,7 @@ func makeNewRoute() {
 	r.HandleFunc("/delete_file", handlers.DeleteFileHandler)
 
 	// ユーザ登録
-	r.HandleFunc("/register_user", handlers.RegisterUserHandler )
+	r.HandleFunc("/register_user", handlers.RegisterUserHandler)
 
 	// ログアウト
 	r.HandleFunc("/logout", handlers.LogoutHandler)

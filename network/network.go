@@ -65,6 +65,7 @@ func ConnectServer(w http.ResponseWriter, r *http.Request, email string) *Client
 
 	return client
 }
+
 // ログインを試みる
 func TryLogon(w http.ResponseWriter, r *http.Request) *Client {
 
@@ -76,7 +77,7 @@ func TryLogon(w http.ResponseWriter, r *http.Request) *Client {
 	email := r.PostFormValue("email")
 	password := r.PostFormValue("password")
 
-	client := ConnectServer( w, r, email )
+	client := ConnectServer(w, r, email)
 	if client == nil {
 		return nil
 	}
@@ -663,9 +664,9 @@ func CreateAItem(client *Client, objectAttrInfo *godaiquest.ObjectAttrInfo, imag
 }
 
 // ユーザの追加
-func AddUser( w http.ResponseWriter, r *http.Request, email string, password string, name string, imgbyte []byte, clientAddress string ) error {
+func AddUser(w http.ResponseWriter, r *http.Request, email string, password string, name string, imgbyte []byte, clientAddress string) error {
 
-	client := ConnectServer( w, r, email )
+	client := ConnectServer(w, r, email)
 	if client == nil {
 		return nil
 	}
@@ -676,33 +677,31 @@ func AddUser( w http.ResponseWriter, r *http.Request, email string, password str
 	hasher.Write([]byte(password))
 	passwordHash := fmt.Sprintf("%x", hasher.Sum(nil))
 
-	client.WriteDword( COM_AddUser )
-	client.WriteDword( 1 )
+	client.WriteDword(COM_AddUser)
+	client.WriteDword(1)
 
 	newUser := &godaiquest.AddUser{
-		MailAddress : proto.String( email ),
-		UserName : proto.String( name ),
-		Password : proto.String( passwordHash ),
-		UserFolder : proto.String( "c:\\tmp\\godaiquest" ),
-		ComputerName : proto.String(clientAddress),
-		UserImage : imgbyte,
+		MailAddress:  proto.String(email),
+		UserName:     proto.String(name),
+		Password:     proto.String(passwordHash),
+		UserFolder:   proto.String("c:\\tmp\\godaiquest"),
+		ComputerName: proto.String(clientAddress),
+		UserImage:    imgbyte,
 	}
-	data, err := proto.Marshal( newUser )	
-	client.WriteProtoData( &data )
+	data, err := proto.Marshal(newUser)
+	client.WriteProtoData(&data)
 
 	okcode, err := client.ReadDword(nil)
 	if err != nil {
 		return err
 	}
-	switch(okcode) {
+	switch okcode {
 
-	case 2: return errors.New("既に同じユーザが存在します")
-	case 1: return nil
-	default: return errors.New("ユーザ登録エラーです")
+	case 2:
+		return errors.New("既に同じユーザが存在します")
+	case 1:
+		return nil
+	default:
+		return errors.New("ユーザ登録エラーです")
 	}
 }
-
-
-
-
-
