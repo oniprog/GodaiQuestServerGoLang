@@ -106,11 +106,17 @@ func ListInfoHandlerCommon(all bool, w http.ResponseWriter, r *http.Request) {
 		cntItem++
 	}
 	if index < 0 {
-		index = cntItem - pagesize
+		if all {
+			index = int(cntItem / pagesize)*pagesize
+		} else {
+			index = 0
+		}
 	}
 	if index < 0 {
 		index = 0
 	}
+	dataTemp["before"] = 0
+	dataTemp["after"] = 0
 
 	for i, aitemdic := range itemInfo.GetAitemDic() {
 
