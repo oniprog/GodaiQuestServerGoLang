@@ -9,6 +9,9 @@ import (
 	"time"
 )
 
+// タイムアウトするまでの待ち時間
+const Timeout = 10*60*60
+
 var store = sessions.NewCookieStore([]byte("i"))
 
 var mapClient = make(map[int]*network.Client)
@@ -104,7 +107,7 @@ func OnMyIdle() {
 	currentTime := time.Now().Unix()
 	for index, time := range mapClientAccess {
 		elapsedTime := currentTime - time
-		if elapsedTime >= 60*10 {
+		if elapsedTime >= Timeout {
 			listDelete[indexDelete] = index
 			indexDelete++
 			if indexDelete == indexDeleteMax {
