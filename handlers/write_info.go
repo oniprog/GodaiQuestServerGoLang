@@ -31,9 +31,16 @@ func WriteInfoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// オブジェクトの情報取得
+	objectAttrInfo, err := network.GetObjectAttrInfo(client)
+	if err != nil {
+		network.RedirectInfoTop(w, r, "", err.Error())
+		return
+	}
+
 	// ダンジョンの空きスペースをチェックする
 	dungeon1Maze := dungeon.ExtractMaze(dungeon1)
-	cntSpace := dungeon.CountSpace(dungeon1Maze)
+	cntSpace := dungeon.CountSpace(dungeon1Maze, dungeon.MakeObjIdToItemIdMap(objectAttrInfo) )
 
 	if cntSpace == 0 {
 		network.RedirectInfoTop(w, r, "", "ダンジョンを広げてください。スペースがありません")
@@ -49,12 +56,6 @@ func WriteInfoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// オブジェクトの情報取得
-	objectAttrInfo, err := network.GetObjectAttrInfo(client)
-	if err != nil {
-		network.RedirectInfoTop(w, r, "", err.Error())
-		return
-	}
 
 	// ブロックイメージの取得
 	dungeonImagesInfo, err := network.GetDungeonImageBlock(client)
@@ -140,7 +141,11 @@ func WriteInfoHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// ダンジョン内に配置する
-	dungeon.SetItemToEmtpyArea(dungeon1, dungeon.MakeItemIdToObjIdMap(objectAttrInfo), newItem)
+	err = dungeon.SetItemToEmtpyArea(dungeon1, dungeon.MakeItemIdToObjIdMap(objectAttrInfo), dungeon.MakeObjIdToItemIdMap(objectAttrInfo), newItem)
+	if err != nil {
+		network.RedirectInfoTop(w, r, "", err.Error())
+		return
+	}
 
 	// 最終書き込み
 	dungeonProto = &godaiquest.SetDungeon{

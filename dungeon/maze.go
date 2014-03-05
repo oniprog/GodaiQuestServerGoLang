@@ -45,12 +45,25 @@ func MakeItemIdToObjIdMap( objectAttrInfo *godaiquest.ObjectAttrInfo ) ItemIdToO
 	return retMap
 }
 
+// ObjectIdからItemIdへのマップ
+type ObjIdToItemIdMap map[uint32]uint32
+func MakeObjIdToItemIdMap( objectAttrInfo *godaiquest.ObjectAttrInfo ) ObjIdToItemIdMap {
+
+	retMap := make(ObjIdToItemIdMap)
+	for _, objAttrDic := range objectAttrInfo.GetObjectAttrDic() {
+
+		objectAttr := objAttrDic.GetObjectAttr()
+		retMap[ uint32(objectAttr.GetObjectId()) ] =uint32(objectAttr.GetItemId())
+	}
+	return retMap
+}
+
 // ObjectId から ObjectAttrへのマップ
 type ObjectIdToAttrMap map[uint32]*godaiquest.ObjectAttr 
 
 // アイテム(情報)かどうかを判定する
-func IsItemObjId( objId uint32 ) bool {
-	return objId != 0
+func IsItem( itemId uint32 ) bool {
+	return itemId != 0
 }
 
 // マップを作成する
@@ -82,12 +95,12 @@ func MakeObjToImageId(tilelist *godaiquest.TileInfo) ObjectIdToImageIdMap {
 }
 
 // ダンジョン内の空きスペースを数える
-func CountSpace( maze [] uint32) int {
+func CountSpace( maze [] uint32, mapObjIdToItemId ObjIdToItemIdMap) int {
 
 	nCnt := 0
 	for i:=0; i<len(maze); i+=2 {
 		objId := maze[i+0]
-		if !IsItemObjId( objId ) {
+		if !IsItem( mapObjIdToItemId[objId] ) {
 			nCnt++
 		}
 	}
@@ -170,7 +183,7 @@ func GetSomeItemImagePair( imageinfo *godaiquest.DungeonBlockImageInfo, index in
 }
 
 // ダンジョン内に情報を配置する
-func SetItemToEmtpyArea( dungeon *godaiquest.DungeonInfo, mapItemIdToObjId ItemIdToObjIdMap, newItem *godaiquest.AItem) error {
+func SetItemToEmtpyArea( dungeon *godaiquest.DungeonInfo, mapItemIdToObjId ItemIdToObjIdMap, mapObjIdToItemId ObjIdToItemIdMap, newItem *godaiquest.AItem) error {
 
 	maze := ExtractMaze( dungeon )
 	sizeX := int(dungeon.GetSizeX())
@@ -184,7 +197,7 @@ func SetItemToEmtpyArea( dungeon *godaiquest.DungeonInfo, mapItemIdToObjId ItemI
 
 			index := (ix+iy*int(dungeon.GetSizeX()))*2
 			objId := maze[index+0]
-			if !IsItemObjId(objId) {
+			if !IsItem(mapObjIdToItemId[objId]) {
 				find = true
 				ixf, iyf = ix, iy
 				break
