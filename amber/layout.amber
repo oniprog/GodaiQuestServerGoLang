@@ -31,6 +31,7 @@ html
       }
       function applyEffect(text) {
         var ret = text.replace(/\r/g, "").replace(/\n/g, "<BR>\r\n") + "\r\n";
+        ret = ret.replace(/ /g, "&nbsp;").replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
         var htmlreg = /\b(http[s]?:\/\/.+?)(?=[\s\b\t\r\n<>])/g;
         ret = ret.replace(htmlreg, '!!!!$1!!!!' );
         ret = ret.replace(/[!]{4}(.+?[.](jpg|png))[!]{4}/g, '<a href="$1" target="_blank"><img style="width:64px;height:64px" src="$1"></a>');
