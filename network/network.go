@@ -705,3 +705,120 @@ func AddUser(w http.ResponseWriter, r *http.Request, email string, password stri
 		return errors.New("ユーザ登録エラーです")
 	}
 }
+
+// キーワード一覧を得る
+func ListKeyword( client * Client, userId int) (*godaiquest.KeywordUserInfo, error) {
+
+	client.WriteDword(COM_ListKeyword)
+	client.WriteDword(1)
+	client.WriteDword(userId)
+	
+	okcode, err := client.ReadDword(nil)
+	if err != nil {
+		return nil, err
+	}
+	if okcode != 1 {
+		return nil, errors.New("キーワード一覧の取得に失敗しました")
+	}
+	data, err := client.ReadProtoData(err)
+	newKeywordInfo := &godaiquest.KeywordUserInfo{}
+	err = proto.Unmarshal(*data, newKeywordInfo)
+
+	return newKeywordInfo, err
+}
+
+// キーワードを登録する
+func RegisterKeyword( client *Client, keyword string) (int, error) {
+
+	client.WriteDword(COM_RegisterKeyword)
+	client.WriteDword(1)
+	client.WriteString(keyword)
+	client.WriteDword(10000); // priority
+	
+	okcode, err := client.ReadDword(nil)
+	if err != nil {
+		return 0, err
+	}
+	if okcode != 1 {
+		return 0, errors.New("キーワードの登録に失敗しました")
+	}
+
+	keywordId, err := client.ReadDword(err)
+	return keywordId, err
+}
+
+// キーワードを記事にひもづける
+func AttachKeyword (client *Client, infoId int, keywordId int, itemPriority int ) error {
+
+	client.WriteDword(COM_AttachKeyword)
+	client.WriteDword(1)
+	client.WriteDword(keywordId)
+	client.WriteDword(infoId)
+	client.WriteDword(itemPriority)
+
+	okcode, err := client.ReadDword(nil)
+	if err != nil {
+		return err
+	}
+	if okcode != 1 {
+		return errors.New("アイテムへのキーワードの割り当てに失敗しました")
+	}
+	return nil	
+}
+
+// 記事をキーワードから外す
+func DetachKeyword(client *Client, infoId int, keywordId int ) error {
+
+	client.WriteDword(COM_DetachKeyword)
+	client.WriteDword(1)
+	client.WriteDword(keywordId)
+	client.WriteDword(infoId)
+	okcode, err := client.ReadDword(nil)
+	if err != nil {
+		return err
+	}
+	if okcode != 1 {
+		return errors.New("キーワードからの記事を外すのに失敗しました")
+	}
+	return nil	
+}
+
+// キーワードの詳細を得る（対応する記事一覧)
+func GetKeywordDetail(client *Client, keywordId int ) (*godaiquest.AKeyword, error){
+
+	client.WriteDword(COM_GetKeywordDetail)
+	client.WriteDword(1)
+	client.WriteDword(keywordId)
+	
+	okcode, err := client.ReadDword(nil)
+	if err != nil {
+		return nil, err
+	}
+	if okcode != 1 {
+		return nil, errors.New("キーワード詳細の取得に失敗しました")
+	}
+
+	data, err := client.ReadProtoData(err)
+	newAKeyword:= &godaiquest.AKeyword{}
+	err = proto.Unmarshal(*data, newAKeyword)
+
+	return newAKeyword, err
+}
+
+// キーワードを削除する
+func DeleteKeyword( client *Client, keywordId int ) error {
+
+	client.WriteDword(COM_DeleteKeyword)
+	client.WriteDword(1)
+	client.WriteDword(keywordId)
+	
+	okcode, err := client.ReadDword(nil)
+	if err != nil {
+		return err
+	}
+	if okcode != 1 {
+		return errors.New("キーワードの削除に失敗しました")
+	}
+
+	return nil
+}

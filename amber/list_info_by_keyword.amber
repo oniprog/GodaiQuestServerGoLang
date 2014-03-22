@@ -1,0 +1,49 @@
+extends layout
+
+block title
+  | Godai Quest Keyword Info List
+
+block content
+  $before = before
+  $after = after
+  $keyword = keyword
+  $view_id = view_id
+  h2 Keyword: &nbsp; #{$keyword} &nbsp; &nbsp;
+    a.small[href="list_user"] 戻る
+
+    if $before || $after
+      div.box2
+        if $before
+          a[href="list_info_all?view_id="+view_id+"&index="+(index-pagesize)] <<戻る
+
+        if $after
+          a[href="list_info_all?view_id="+view_id+"&index="+(index+pagesize)] >>進む
+  $can_manip = can_manip
+  each $i, $aitem in itemlist
+    $info_id = $aitem.ItemId
+    if $can_manip
+      form[action="manage_keyword"][method="post"]
+        input[type="submit"][value="キーワード内から外す"][name="remove_info"]
+        input[type="hidden"][name="keyword"][value=$keyword]
+        input[type="hidden"][name="view_id"][value=$view_id]
+        input[type="hidden"][name="info_id"][value=$info_id]
+    div.box.text #{$aitem.HeaderString}
+    script
+      </script>
+      <A href="read_info?view_id=#{$view_id}&info_id=#{$info_id}" target="_blank">別窓で読む</A>
+    br
+    br
+  br
+  br
+  form[action="manage_keyword"][id="delete_keyword"][method="post"]
+    input[type="submit"][value="キーワードを消す"][name="delete_keyword"]
+    input[type="hidden"][name="keyword"][value=$keyword]
+    input[type="hidden"][name="view_id"][value=$view_id]
+  script
+    var e1 = document.getElementById("delete_keyword")
+    e1.addEventListener("submit", function(evt) {
+      if (!confirm("本当に削除してよろしいですか？")) {
+         evt.preventDefault();
+      }
+      else { return true; }
+    });

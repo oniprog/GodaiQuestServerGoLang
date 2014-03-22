@@ -317,3 +317,23 @@ message RealMonsterLocationInfo {
 	repeated ARealMonsterLocation location_list = 1;
 }
 
+// キーワードに関連付けられたアイテム群
+message AKeywordItem {
+	optional int32 item_priority = 1;
+	optional int32 item_id = 2;
+}
+
+// キーワードとそれに関連付けられたアイテム群
+message AKeyword {
+	optional int32 keyword_id = 1;
+	optional string keyword = 2;
+	optional int32 keyword_priority = 3;
+	repeated AKeywordItem keyword_item_set = 4;
+}
+
+// キーワードとアイテムの関連情報
+message KeywordUserInfo {
+	optional int32 user_id = 1;
+	repeated AKeyword keyword_set = 2;
+}
+

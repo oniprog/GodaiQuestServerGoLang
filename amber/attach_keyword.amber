@@ -1,0 +1,27 @@
+extends layout
+
+block title
+  | Godai Quest keyword
+
+block content
+  $view_id = view_id
+  $info_id = info_id
+  $keyword_list = keyword_list
+  h2 キーワード登録
+  form[action="attach_keyword"][method="post"]
+    div キーワード
+      select[name="keyword_cand"][id="keyword_cand"]
+        option[name="未定義"][value="未定義"] 未定義
+        each $keyword in $keyword_list
+          option[name=$keyword][value=$keyword] #{$keyword}
+      input[type="text"][id="keyword"][name="keyword"][size="40"]
+      input[type="submit"][value="登録"]
+      input[type="hidden"][id="info_id"][name="info_id"][value=$info_id]
+      input[type="hidden"][id="view_id"][name="view_id"][value=$view_id]
+  br
+  div.hbox.text 記事にキーワードをひもづけします。キーワードごとに、記事をみることなどが可能です。
+  script
+    var e1 = document.getElementById("keyword_cand");
+    e1.addEventListener("change", function() {
+        var e1=document.getElementById("keyword_cand"); var e2=document.getElementById("keyword"); e2.value = e1.value;
+    });

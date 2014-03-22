@@ -8,12 +8,19 @@ block content
   div
     A[href="write_info"] 新規記事を書く
 
+  $keyword = keyword
   h2 未読情報
     each $auser in UserInfo
+      $id = $auser.UserId
+      $keyword = $auser.Keyword
       h2
         A[href="list_info?view_id="+$auser.UserId]
           script
             </script>
             <img src="data:image/png;base64,#{$auser.UriImage}" style="width:60px">
           span #{$auser.UserName}さん
+      span.tiny Keyword: &nbsp;
+        each $keyword_body in $keyword
+          span.tiny &nbsp; &nbsp;
+          A.tiny[href="list_info_by_keyword?keyword="+$keyword_body+"&view_id="+$auser.UserId] #{$keyword_body}
       p #{$auser.UnreadCount}個の未読情報があります

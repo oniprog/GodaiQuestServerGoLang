@@ -29,8 +29,17 @@ h2 {
     border-style: none none solid;
 }
 
+.tiny {
+    font-size:8pt;
+}
 .small {
     font-size:12pt;
+}
+
+.tinybox {
+    padding:1px 1px;
+    border-style: inset;
+    background: #e0e0e0;
 }
 
 .box {

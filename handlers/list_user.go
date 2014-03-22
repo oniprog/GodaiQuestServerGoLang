@@ -47,6 +47,23 @@ func ListUserHandler(w http.ResponseWriter, r *http.Request) {
 		mapUser["UserName"] = auser.GetUserName()
 		mapUser["UriImage"] = string(network.ConvURIImage(auser.GetUserImage()))
 		mapUser["UnreadCount"] = len(mapUserUnread[int(auser.GetUserId())])
+
+		// ユーザごとのキーワードを取り出す
+		keywordUserInfo, _:= network.ListKeyword(client, int(auser.GetUserId()))
+
+		// キーワードを優先順番に並び替える
+		listKeyword := make(map[int]string, len(keywordUserInfo.GetKeywordSet()))
+		for _, akeyword := range keywordUserInfo.GetKeywordSet()  {
+			priority := int(akeyword.GetKeywordPriority())
+			for ; ; priority++ {
+				_, ok := listKeyword[priority];
+				if !ok {
+					break
+				}
+			}
+			listKeyword[priority] = akeyword.GetKeyword()
+		}
+		mapUser["Keyword"] = listKeyword
 		mapUsers[int(auser.GetUserId())] = mapUser
 	}
 	dataTemp["UserInfo"] = mapUsers

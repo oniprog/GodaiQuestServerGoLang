@@ -51,3 +51,13 @@ const COM_SetUserFolder = 41
 const COM_GetUserFolder = 42
 const COM_GetRealMonsterSrcInfo = 43
 const COM_GetItemInfoByUserId = 44
+const COM_RegisterKeyword = 45
+const COM_ModifyKeyword = 46
+const COM_ModifyKeywordPriority = 47
+const COM_AttachKeyword = 48
+const COM_DetachKeyword = 49
+const COM_ListKeyword = 50
+const COM_GetKeywordDetail = 51
+const COM_ModifyKeywordItemPriority = 52
+const COM_DeleteKeyword = 53
+

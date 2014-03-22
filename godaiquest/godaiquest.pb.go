@@ -56,6 +56,9 @@ It has these top-level messages:
 	RealMonsterInfo
 	ARealMonsterLocation
 	RealMonsterLocationInfo
+	AKeywordItem
+	AKeyword
+	KeywordUserInfo
 */
 package godaiquest
 
@@ -1432,6 +1435,94 @@ func (*RealMonsterLocationInfo) ProtoMessage()    {}
 func (m *RealMonsterLocationInfo) GetLocationList() []*ARealMonsterLocation {
 	if m != nil {
 		return m.LocationList
+	}
+	return nil
+}
+
+type AKeywordItem struct {
+	ItemPriority     *int32 `protobuf:"varint,1,opt,name=item_priority" json:"item_priority,omitempty"`
+	ItemId           *int32 `protobuf:"varint,2,opt,name=item_id" json:"item_id,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *AKeywordItem) Reset()         { *m = AKeywordItem{} }
+func (m *AKeywordItem) String() string { return proto.CompactTextString(m) }
+func (*AKeywordItem) ProtoMessage()    {}
+
+func (m *AKeywordItem) GetItemPriority() int32 {
+	if m != nil && m.ItemPriority != nil {
+		return *m.ItemPriority
+	}
+	return 0
+}
+
+func (m *AKeywordItem) GetItemId() int32 {
+	if m != nil && m.ItemId != nil {
+		return *m.ItemId
+	}
+	return 0
+}
+
+type AKeyword struct {
+	KeywordId        *int32          `protobuf:"varint,1,opt,name=keyword_id" json:"keyword_id,omitempty"`
+	Keyword          *string         `protobuf:"bytes,2,opt,name=keyword" json:"keyword,omitempty"`
+	KeywordPriority  *int32          `protobuf:"varint,3,opt,name=keyword_priority" json:"keyword_priority,omitempty"`
+	KeywordItemSet   []*AKeywordItem `protobuf:"bytes,4,rep,name=keyword_item_set" json:"keyword_item_set,omitempty"`
+	XXX_unrecognized []byte          `json:"-"`
+}
+
+func (m *AKeyword) Reset()         { *m = AKeyword{} }
+func (m *AKeyword) String() string { return proto.CompactTextString(m) }
+func (*AKeyword) ProtoMessage()    {}
+
+func (m *AKeyword) GetKeywordId() int32 {
+	if m != nil && m.KeywordId != nil {
+		return *m.KeywordId
+	}
+	return 0
+}
+
+func (m *AKeyword) GetKeyword() string {
+	if m != nil && m.Keyword != nil {
+		return *m.Keyword
+	}
+	return ""
+}
+
+func (m *AKeyword) GetKeywordPriority() int32 {
+	if m != nil && m.KeywordPriority != nil {
+		return *m.KeywordPriority
+	}
+	return 0
+}
+
+func (m *AKeyword) GetKeywordItemSet() []*AKeywordItem {
+	if m != nil {
+		return m.KeywordItemSet
+	}
+	return nil
+}
+
+type KeywordUserInfo struct {
+	UserId           *int32      `protobuf:"varint,1,opt,name=user_id" json:"user_id,omitempty"`
+	KeywordSet       []*AKeyword `protobuf:"bytes,2,rep,name=keyword_set" json:"keyword_set,omitempty"`
+	XXX_unrecognized []byte      `json:"-"`
+}
+
+func (m *KeywordUserInfo) Reset()         { *m = KeywordUserInfo{} }
+func (m *KeywordUserInfo) String() string { return proto.CompactTextString(m) }
+func (*KeywordUserInfo) ProtoMessage()    {}
+
+func (m *KeywordUserInfo) GetUserId() int32 {
+	if m != nil && m.UserId != nil {
+		return *m.UserId
+	}
+	return 0
+}
+
+func (m *KeywordUserInfo) GetKeywordSet() []*AKeyword {
+	if m != nil {
+		return m.KeywordSet
 	}
 	return nil
 }

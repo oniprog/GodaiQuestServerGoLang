@@ -91,6 +91,11 @@ func makeNewRoute() {
 	// ユーザ登録
 	r.HandleFunc("/register_user", handlers.RegisterUserHandler)
 
+	// キーワード
+	r.HandleFunc("/attach_keyword", handlers.AttachKeywordHandler )
+	r.HandleFunc("/list_info_by_keyword", handlers.ListInfoByKeywordHandler )
+	r.HandleFunc("/manage_keyword", handlers.ManageKeywordHandler )
+
 	// ログアウト
 	r.HandleFunc("/logout", handlers.LogoutHandler)
 

@@ -24,6 +24,7 @@ block content
     script
       </script>
       <A href="read_info?view_id=#{$view_id_tmp}&info_id=#{$info_id_tmp}">読む</A>
+      <A href="attach_keyword?view_id=#{$view_id_tmp}&info_id=#{$info_id_tmp}" target="_blank">keywordをつける</A>
     br
     br
   br
