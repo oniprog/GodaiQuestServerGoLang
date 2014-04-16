@@ -12,10 +12,10 @@ block content
     if $before || $after
       div.box2
         if $before
-          a[href="list_info?view_id="+view_id+"&index="+(index-pagesize)] <<戻る
+          a[href="list_info?view_id="+view_id+"&index="+(index-pagesize)] <<前のページ
 
         if $after
-          a[href="list_info?view_id="+view_id+"&index="+(index+pagesize)] >>進む
+          a[href="list_info?view_id="+view_id+"&index="+(index+pagesize)] >>次のページ
     
   $view_id_tmp = view_id
   each $i, $aitem in itemlist
