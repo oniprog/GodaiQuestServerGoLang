@@ -49,14 +49,14 @@ func ListUserHandler(w http.ResponseWriter, r *http.Request) {
 		mapUser["UnreadCount"] = len(mapUserUnread[int(auser.GetUserId())])
 
 		// ユーザごとのキーワードを取り出す
-		keywordUserInfo, _:= network.ListKeyword(client, int(auser.GetUserId()))
+		keywordUserInfo, _ := network.ListKeyword(client, int(auser.GetUserId()))
 
 		// キーワードを優先順番に並び替える
 		listKeyword := make(map[int]string, len(keywordUserInfo.GetKeywordSet()))
-		for _, akeyword := range keywordUserInfo.GetKeywordSet()  {
+		for _, akeyword := range keywordUserInfo.GetKeywordSet() {
 			priority := int(akeyword.GetKeywordPriority())
 			for ; ; priority++ {
-				_, ok := listKeyword[priority];
+				_, ok := listKeyword[priority]
 				if !ok {
 					break
 				}

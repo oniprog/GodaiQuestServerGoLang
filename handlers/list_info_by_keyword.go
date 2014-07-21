@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"github.com/oniprog/GodaiQuestServerGoLang/godaiquest"
 	"github.com/oniprog/GodaiQuestServerGoLang/network"
 	"github.com/oniprog/GodaiQuestServerGoLang/sessions"
@@ -8,12 +9,11 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"fmt"
 )
 
-func redirectListInfoByKeyword(w http.ResponseWriter, r * http.Request, message string, info_id int, view_id int, keyword string ) {
+func redirectListInfoByKeyword(w http.ResponseWriter, r *http.Request, message string, info_id int, view_id int, keyword string) {
 
-	redirectStr := fmt.Sprintf("/list_info_by_keyword?message="+message+"&info_id=%d&keyword="+keyword+"&view_id=%d", info_id, view_id )
+	redirectStr := fmt.Sprintf("/list_info_by_keyword?message="+message+"&info_id=%d&keyword="+keyword+"&view_id=%d", info_id, view_id)
 	http.Redirect(w, r, redirectStr, http.StatusSeeOther)
 }
 
@@ -41,7 +41,7 @@ func ListInfoByKeywordHandler(w http.ResponseWriter, r *http.Request) {
 		network.RedirectIndex(w, r, "", err.Error())
 	}
 	dataTemp["keyword"] = keyword
-	
+
 	// 見るユーザ
 	viewId := client.UserId
 	if len(queries["view_id"]) > 0 {
@@ -70,7 +70,7 @@ func ListInfoByKeywordHandler(w http.ResponseWriter, r *http.Request) {
 			dataTemp["name"] = auser.GetUserName()
 		}
 	}
-	
+
 	// 読んでいる位置
 	index := -1
 	if len(queries["index"]) > 0 {
@@ -97,11 +97,11 @@ func ListInfoByKeywordHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// キーワードに対応した記事番号を取り出す
-	akeyword, err := network.GetKeywordDetail(client, keywordId )
+	akeyword, err := network.GetKeywordDetail(client, keywordId)
 
 	// 記事番号をマップにまとめておく
 	mapItemId := make(map[int]int, len(akeyword.GetKeywordItemSet()))
-	for _,keywordItem := range akeyword.GetKeywordItemSet() {
+	for _, keywordItem := range akeyword.GetKeywordItemSet() {
 		mapItemId[int(keywordItem.GetItemId())] = 1
 	}
 

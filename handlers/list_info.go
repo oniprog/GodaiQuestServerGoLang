@@ -107,7 +107,7 @@ func ListInfoHandlerCommon(all bool, w http.ResponseWriter, r *http.Request) {
 	}
 	if index < 0 {
 		if all {
-			index = int(cntItem / pagesize)*pagesize
+			index = int(cntItem/pagesize) * pagesize
 		} else {
 			index = 0
 		}

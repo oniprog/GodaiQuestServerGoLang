@@ -10,7 +10,7 @@ import (
 )
 
 // タイムアウトするまでの待ち時間
-const Timeout = 10*60*60
+const Timeout = 10 * 60 * 60
 
 var store = sessions.NewCookieStore([]byte("i"))
 

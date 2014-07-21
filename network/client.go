@@ -322,18 +322,18 @@ func (this *Client) ReadFiles(basedir string, err error) error {
 
 		filename, err := this.ReadString(err)
 		outputPath := path.Join(basedir, filepath.Clean(filename))
-		os.MkdirAll( filepath.Dir(outputPath), 0777 )
-		
+		os.MkdirAll(filepath.Dir(outputPath), 0777)
+
 		fmt.Printf("Receive file : %s -> %s\n", filename, outputPath)
 
 		data, err := this.ReadBinary(err)
 		gzipReader, _ := gzip.NewReader(bytes.NewReader(data))
 		fo, err := os.Create(outputPath)
 		if err != nil {
-			fmt.Printf("Can't crate %s\n", filename )
+			fmt.Printf("Can't crate %s\n", filename)
 			return err
 		}
-		io.Copy( fo, gzipReader )
+		io.Copy(fo, gzipReader)
 		gzipReader.Close()
 		fo.Close()
 	}

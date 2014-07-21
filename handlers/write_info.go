@@ -40,7 +40,7 @@ func WriteInfoHandler(w http.ResponseWriter, r *http.Request) {
 
 	// ダンジョンの空きスペースをチェックする
 	dungeon1Maze := dungeon.ExtractMaze(dungeon1)
-	cntSpace := dungeon.CountSpace(dungeon1Maze, dungeon.MakeObjIdToItemIdMap(objectAttrInfo) )
+	cntSpace := dungeon.CountSpace(dungeon1Maze, dungeon.MakeObjIdToItemIdMap(objectAttrInfo))
 
 	if cntSpace == 0 {
 		network.RedirectInfoTop(w, r, "", "ダンジョンを広げてください。スペースがありません")
@@ -55,7 +55,6 @@ func WriteInfoHandler(w http.ResponseWriter, r *http.Request) {
 		template.Execute("write_info", w, dataTemp)
 		return
 	}
-
 
 	// ブロックイメージの取得
 	dungeonImagesInfo, err := network.GetDungeonImageBlock(client)
