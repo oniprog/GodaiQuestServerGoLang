@@ -50,6 +50,7 @@ func fileHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, path.Join("public", r.URL.Path[1:]))
 }
 
+// ルーティングの作成
 func makeNewRoute() {
 
 	r := mux.NewRouter()

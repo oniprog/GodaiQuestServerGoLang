@@ -251,10 +251,10 @@ func (this *Client) EnsureReadByte(ensurebyte int) error {
 func (this *Client) WriteString(str string) error {
 
 	data := StringToBinaryUTF16(str)
-	this.WriteLength(len(data) + 1)
+	this.WriteLength(len(data))
 
 	_, err := this.Conn.Write(data)
-	this.Conn.Write([]byte{0})
+	//this.Conn.Write([]byte{0})
 	return err
 }
 
