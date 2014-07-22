@@ -4,3 +4,4 @@ go get github.com/gorilla/mux
 go get github.com/eknkc/amber
 go get github.com/nfnt/resize
 go get code.google.com/p/go.image/bmp
+go get code.google.com/p/goprotobuf/proto
