@@ -1,18 +1,20 @@
 doctype 5
 html 
   head
+    link[rel="stylesheet"][href="public/stylesheet/bootstrap.min.css"]
+    link[rel="stylesheet"][href="public/stylesheet/bootstrap-theme.min.css"]
     link[rel="stylesheet"][href="public/stylesheet/default.css"]
     script[type="text/javascript"][src="http://code.jquery.com/jquery-2.1.0.min.js"]
+    script[type="text/javascript"][src="public/js/bootstrap.min.js"]
     title 
       block title
   body
-    h1 GodaiQuest
-      span.small 　　　新感覚 情報共有 SNS &nbsp; &nbsp; 
-      a#logout[href="logout"] logout
+    block menu
 
     if message 
-      div
-        p#error_message #{message}
+      div[class="container"][style="max-width:400px"]
+        div[class="alert alert-info" role="alert"]
+          p #{message}
 
     block content
     

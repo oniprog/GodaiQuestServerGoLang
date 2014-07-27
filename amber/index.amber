@@ -3,16 +3,21 @@ extends layout
 block title
   | Godai Quest login page
 
+block menu
+  div[class="container menu"]
+    h2[class="masthead-brand"] ログイン画面
+      div[class="masthead clearfix"]
+        div[class="inner"]
+          ul[class="nav masthead-nav"]
+            li[class="active"]
+              a[href="index"] Home
+            li 
+              a[href="register_user"] 新規ユーザ登録
+
 block content
-  div
-    h2 ログイン画面 &nbsp; &nbsp;
-      A.small[href="register_user"] 新規ユーザ登録
-    div#loginbox
-      form[name="login"][action="login"][method="post"]
-        p.monospace メールアドレス:
-          input[type="text"][name="email"][size="40"][value=email]
-        p.monospace パスワード : &nbsp; 
-          input[type="password"][name="password"][size="40"] #{password}
-        input[type="reset"]
-        input.loginbutton[type="submit", value="login"]
+    div[class="container"]
+      form[class="form-signin"][name="login"][action="login"][method="post"]
+        input[type="text"][placeholder="Email address"][class="form-control"][name="email"][size="40"][value=email][required][autofocus]
+        input[type="password"][class="form-control"][placeholder="Password"][name="password"][size="40"][required] #{password}
+        input[class="btn btn-lg btn-primary btn-block"][type="submit", value="login"]
       br

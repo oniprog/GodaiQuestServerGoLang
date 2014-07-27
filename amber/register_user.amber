@@ -1,12 +1,21 @@
 extends layout
 
 block title
-  | Godai Quest login page
+  | Godai Quest register page
+
+block menu
+  div[class="container menu"]
+    h2[class="masthead-brand"] ユーザ登録
+      div[class="masthead clearfix"]
+        div[class="inner"]
+          ul[class="nav masthead-nav"]
+            li
+              a[href="index"] Home
+            li[class="active"]
+              a[href="register_user"] 新規ユーザ登録
 
 block content
-  h2 ユーザ登録 &nbsp; &nbsp;
-    A.small[href="index"] 戻る
-  
+  div[class="container"]
   form[action="register_user"][method="post"][enctype="multipart/form-data"]
     p キャラクタ名: 
       input[type="text"][name="username"][size="20"]
