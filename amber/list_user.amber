@@ -3,28 +3,42 @@ extends layout
 block title
   | Godai Quest user list
 
-block content
-  h2 メニュー
-  div
-    A[href="write_info"] 新規記事を書く
+block menu
+  div[class="container menu"]
+    h2[class="masthead-brand"] ユーザ一覧
+      div[class="masthead clearfix"]
+        div[class="inner"]
+          ul[class="nav masthead-nav"]
+            li[class="active"]
+              a[href="write_info"] 新規記事を書く
+            li 
+              a[href="logout"] ログアウト
 
-  $keyword = keyword
-  h2 未読情報
+block content
+  table[class="table table-hover"]
+    $keyword = keyword
+    tr
+      th[style="width:60px"] 未読情報
     each $auser in UserInfo
       $id = $auser.UserId
       $keyword = $auser.Keyword
-      h2[style="border-style:none"]
-        A[href="list_info?view_id="+$auser.UserId]
+      tr
+        td[style="width:60px"]
+          A[href="list_info?view_id="+$auser.UserId]
           script
             </script>
             <img src="data:image/png;base64,#{$auser.UriImage}" style="width:60px">
-          span #{$auser.UserName}さん
-      p #{$auser.UnreadCount}個の未読情報があります
-      span.tiny Keyword: &nbsp;
-        each $keyword_body in $keyword
-          span.tiny &nbsp; &nbsp;
-          A.tiny[href="list_info_by_keyword?keyword="+$keyword_body+"&view_id="+$auser.UserId] #{$keyword_body}
-      h2 　
+        td[style="width:100px"] 
+          A[href="list_info?view_id="+$auser.UserId] #{$auser.UserName}さん
+        td[style="width:180px"] #{$auser.UnreadCount}個の未読情報があります
+        td
+          ul[class="list-inline"] 
+            li Keyword:
+            each $keyword_body in $keyword
+              li 
+                A.tiny[href="list_info_by_keyword?keyword="+$keyword_body+"&view_id="+$auser.UserId] #{$keyword_body}
+        td 　
+        td 　
 
 
       
