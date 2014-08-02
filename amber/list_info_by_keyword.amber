@@ -3,40 +3,63 @@ extends layout
 block title
   | Godai Quest Keyword Info List
 
+block menu
+  $keyword = keyword
+  div[class="container menu-wide"]
+    h2[class="masthead-brand"] #{$keyword}
+      div[class="masthead clearfix"]
+        div[class="inner"]
+          ul[class="nav masthead-nav"]
+            li[class="active"]
+              a[href="list_user"] 戻る
+            li
+              a[href="write_info"] 新規記事を書く
+            li 
+              a[href="logout"] ログアウト
+
 block content
   $before = before
   $after = after
   $keyword = keyword
   $view_id = view_id
-  h2 Keyword: &nbsp; #{$keyword} &nbsp; &nbsp;
-    a.small[href="list_user"] 戻る
-
+  div[class="container"]
     if $before || $after
-      div.box2
-        if $before
-          a[href="list_info_by_keyword?keyword="+$keyword+"&view_id="+view_id+"&index="+(index-pagesize)] <<前のページ
+      div[class="row"]
+        div[class="col-xs-offset-0 col-xs-12"]
+          if $before
+            a[class="btn btn-default btn-xs"][href="list_info_all?view_id="+view_id+"&index="+(index-pagesize)] <<前のページ
 
-        if $after
-          a[href="list_info_by_keyword?keyword="+$keyword+"&view_id="+view_id+"&index="+(index+pagesize)] >>次のページ
+          if $after
+            a[class="btn btn-default btn-xs"][href="list_info_all?view_id="+view_id+"&index="+(index+pagesize)] >>次のページ
+      div.box2
+
   $can_manip = can_manip
   each $i, $aitem in itemlist
     $info_id = $aitem.ItemId
-    if $can_manip
-      form[action="manage_keyword"][method="post"]
-        input[type="submit"][value="キーワード内から外す"][name="remove_info"]
-        input[type="hidden"][name="keyword"][value=$keyword]
-        input[type="hidden"][name="view_id"][value=$view_id]
-        input[type="hidden"][name="info_id"][value=$info_id]
-    div.box.text #{$aitem.HeaderString}
-    script
-      </script>
-      <A href="read_info?view_id=#{$view_id}&info_id=#{$info_id}" target="_blank">別窓で読む</A>
-    br
-    br
+    div[class="row"]
+      div[class="col-xs-1"]
+        ul[class="nav nav-pills nav-stacked"]
+          if $can_manip
+            li
+              form[action="manage_keyword"][method="post"]
+                input[class="btn-link btn-xs"][type="submit"][value="キーワード内から外す"][name="remove_info"]
+                input[type="hidden"][name="keyword"][value=$keyword]
+                input[type="hidden"][name="view_id"][value=$view_id]
+                input[type="hidden"][name="info_id"][value=$info_id]
+          br
+          br
+          script
+            </script>
+            <li>
+            <A href="read_info?view_id=#{$view_id}&info_id=#{$info_id}" target="_blank">別窓で読む</A>
+            </li>
+      div.box.text[class="col-xs-10"] #{$aitem.HeaderString}
+      br
+      br
   br
   br
   form[action="manage_keyword"][id="delete_keyword"][method="post"]
-    input[type="submit"][value="キーワードを消す"][name="delete_keyword"]
+    input[class="btn-danger"][type="submit"][value="キーワードを消す"][name="delete_keyword"]
     input[type="hidden"][name="keyword"][value=$keyword]
     input[type="hidden"][name="view_id"][value=$view_id]
   script
