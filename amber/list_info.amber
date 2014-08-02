@@ -3,32 +3,53 @@ extends layout
 block title
   | Godai Quest Info List
 
+block menu
+  div[class="container menu-wide"]
+    h2[class="masthead-brand"] #{name}さんの未読情報
+      div[class="masthead clearfix"]
+        div[class="inner"]
+          ul[class="nav masthead-nav"]
+            li[class="active"]
+              a[href="list_user"] 戻る
+            li
+              a[href="list_info_all?view_id="+view_id] 全部の書き込みを表示する
+            li
+              a[href="write_info"] 新規記事を書く
+            li 
+              a[href="logout"] ログアウト
+
 block content
   $before = before
   $after = after
-  h2 #{name}さんの未読情報 &nbsp; &nbsp;
-    a.small[href="list_user"] 戻る
+  div[class="container"]
 
     if $before || $after
-      div.box2
-        if $before
-          a[href="list_info?view_id="+view_id+"&index="+(index-pagesize)] <<前のページ
+      div[class="row"]
+        div[class="col-xs-offset-0 col-xs-12"]
+          if $before
+            a[class="btn btn-default btn-xs"][href="list_info_all?view_id="+view_id+"&index="+(index-pagesize)] <<前のページ
 
-        if $after
-          a[href="list_info?view_id="+view_id+"&index="+(index+pagesize)] >>次のページ
+          if $after
+            a[class="btn btn-default btn-xs"][href="list_info_all?view_id="+view_id+"&index="+(index+pagesize)] >>次のページ
     
   $view_id_tmp = view_id
   each $i, $aitem in itemlist
-    div.box.text #{$aitem.HeaderString}
     $info_id_tmp = $aitem.ItemId
-    script
-      </script>
-      <A href="read_info?view_id=#{$view_id_tmp}&info_id=#{$info_id_tmp}">読む</A>
-      <A href="attach_keyword?view_id=#{$view_id_tmp}&info_id=#{$info_id_tmp}" target="_blank">keywordをつける</A>
+    $info_id_tmp2 = $aitem.ItemId
+    div[class="row"]
+      div[class="col-xs-1"]
+        script
+          </script>
+          <ul class="nav nav-pills nav-stacked">
+          <li><A class="" href="read_info?view_id=#{$view_id_tmp}&info_id=#{$info_id_tmp}">読む</A></li>
+          <li><A class="" href="attach_keyword?view_id=#{$view_id_tmp}&info_id=#{$info_id_tmp2}" target="_blank">keywordつける</A></li>
+          </ul>
+      
+      $header_string = $aitem.HeaderString
+      div[class="col-xs-10"]
+        div.box.text #{$header_string}
     br
     br
   br
   br
 
-  div
-    a[href="list_info_all?view_id="+view_id] 全部の書き込みを表示する

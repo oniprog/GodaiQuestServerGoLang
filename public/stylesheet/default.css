@@ -147,3 +147,7 @@ h2 {
 .menu {
   max-width:330px;
 }
+
+.menu-wide {
+  max-width:630px;
+}
