@@ -173,6 +173,20 @@ message ItemInfo {
 	repeated AItemDic aitem_dic = 1;
 }
 
+message AItem2 {
+
+	optional int32 item_id  = 1;
+	optional int32 item_image_id = 2;
+	optional string header_string = 3;
+	optional bytes header_image = 4;
+	optional bool bNew = 5;
+	optional sfixed64 created = 6;
+	optional sfixed64 last_modified = 7;
+}
+message ItemInfo2 {
+	repeated AItem2 item_list = 1;
+}
+
 message ALocation {
 
 	optional int32 user_id = 1;
@@ -337,3 +351,13 @@ message KeywordUserInfo {
 	repeated AKeyword keyword_set = 2;
 }
 
+// アイテム時間
+message AItemTime {
+	optional int32 item_id = 1;
+	optional sfixed64 created = 2;
+	optional sfixed64 last_modified = 3;
+}
+
+message ItemTimeInfo {
+ 	repeated AItemTime item_time_list = 1;
+}

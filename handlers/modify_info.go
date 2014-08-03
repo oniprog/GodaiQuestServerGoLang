@@ -53,10 +53,9 @@ func ModifyInfoHandler(w http.ResponseWriter, r *http.Request) {
 		network.RedirectInfoTop(w, r, "", err.Error())
 		return
 	}
-	var curItem *godaiquest.AItem
-	for _, aitemdic := range itemInfo.GetAitemDic() {
+	var curItem *godaiquest.AItem2
+	for _, aitem := range itemInfo.GetItemList() {
 
-		aitem := aitemdic.GetAitem()
 		itemId := int(aitem.GetItemId())
 		if itemId == infoId {
 

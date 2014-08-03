@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"github.com/oniprog/GodaiQuestServerGoLang/godaiquest"
+	//"github.com/oniprog/GodaiQuestServerGoLang/godaiquest"
 	"github.com/oniprog/GodaiQuestServerGoLang/network"
 	"github.com/oniprog/GodaiQuestServerGoLang/sessions"
 	"github.com/oniprog/GodaiQuestServerGoLang/template"
@@ -93,11 +93,10 @@ func ListInfoHandlerCommon(all bool, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 可視化用に調整する
-	mapItem := make(map[int]*godaiquest.AItem)
+	mapItem := make(map[int]*aitem3)
 	cntItem := 0
-	for _, aitemdic := range itemInfo.GetAitemDic() {
+	for _, aitem := range itemInfo.GetItemList() {
 
-		aitem := aitemdic.GetAitem()
 		itemId := int(aitem.GetItemId())
 		_, ok := mapUnread[itemId]
 		if !ok && !all {
@@ -119,9 +118,8 @@ func ListInfoHandlerCommon(all bool, w http.ResponseWriter, r *http.Request) {
 	dataTemp["after"] = 0
 
 	i := -1
-	for _, aitemdic := range itemInfo.GetAitemDic() {
+	for _, aitem := range itemInfo.GetItemList() {
 
-		aitem := aitemdic.GetAitem()
 		itemId := int(aitem.GetItemId())
 		_, ok := mapUnread[itemId]
 		if !ok && !all {
@@ -131,10 +129,16 @@ func ListInfoHandlerCommon(all bool, w http.ResponseWriter, r *http.Request) {
 		if i < index {
 			dataTemp["before"] = 1
 		} else if i >= index && i <= index+pagesize {
-			mapItem[i-index] = aitem
 			strHeader := *aitem.HeaderString + "\n\n\n\n\n\n"
 			newstr := strings.Join(strings.Split(strHeader, "\n")[0:5], "\n")
-			aitem.HeaderString = &newstr
+			//aitem.HeaderString = &newstr
+            mapItem[i-index] = new(aitem3)
+			mapItem[i-index].HeaderString = &newstr
+			mapItem[i-index].ItemId = aitem.GetItemId()
+
+            //mapItem[i-index].Created = strconv.FormatInt(aitem.GetCreated()*100-time.Date(2000,1,1,0,0,0,0,time.UTC).UnixNano(),10)
+            mapItem[i-index].Created = DateTimeString(aitem.GetCreated())
+            mapItem[i-index].LastModified = DateTimeString( aitem.GetLastModified())
 		} else {
 			dataTemp["after"] = 1
 		}

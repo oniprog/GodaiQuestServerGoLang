@@ -183,13 +183,13 @@ func GetUnpickedupItemInfo(client *Client, w http.ResponseWriter, r *http.Reques
 }
 
 // ユーザIdに対応するアイテム情報を得る
-func GetItemInfoByUserId(client *Client, w http.ResponseWriter, r *http.Request, userId int) (*godaiquest.ItemInfo, error) {
+func GetItemInfoByUserId(client *Client, w http.ResponseWriter, r *http.Request, userId int) (*godaiquest.ItemInfo2, error) {
 
 	// ロックする
 	lock <- 1
 	defer func() { <-lock }()
 
-	client.WriteDword(COM_GetItemInfoByUserId)
+	client.WriteDword(COM_GetItemInfo2ByUserId)
 	client.WriteDword(1) // Version
 	client.WriteDword(userId)
 
@@ -199,9 +199,9 @@ func GetItemInfoByUserId(client *Client, w http.ResponseWriter, r *http.Request,
 	}
 
 	data, err := client.ReadProtoData(err)
-	retItemInfo := &godaiquest.ItemInfo{}
-	err = proto.Unmarshal(*data, retItemInfo)
-	return retItemInfo, err
+	retItemInfo2 := &godaiquest.ItemInfo2{}
+	err = proto.Unmarshal(*data, retItemInfo2)
+	return retItemInfo2, err
 }
 
 // ファイル情報格納

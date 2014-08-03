@@ -38,10 +38,14 @@ block content
     $info_id_tmp2 = $aitem.ItemId
     div[class="row"]
       div[class="col-xs-1"]
+        div 作成
+        div #{$aitem.Created}
+        div 最終更新
+        div #{$aitem.LastModified}
         script
           </script>
           <ul class="nav nav-pills nav-stacked">
-          <li><A class="" href="read_info?view_id=#{$view_id_tmp}&info_id=#{$info_id_tmp}">読む</A></li>
+          <li><A class="" target="_blank" href="read_info?view_id=#{$view_id_tmp}&info_id=#{$info_id_tmp}">別窓で読む</A></li>
           <li><A class="" href="attach_keyword?view_id=#{$view_id_tmp}&info_id=#{$info_id_tmp2}" target="_blank">keywordつける</A></li>
           </ul>
       

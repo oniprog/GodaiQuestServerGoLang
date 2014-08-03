@@ -2,64 +2,6 @@
 // source: godaiquest.proto
 // DO NOT EDIT!
 
-/*
-Package godaiquest is a generated protocol buffer package.
-
-It is generated from these files:
-	godaiquest.proto
-
-It has these top-level messages:
-	AddUser
-	Login
-	GetDungeon
-	DungeonInfo
-	ImagePair
-	ImagePairDic
-	DungeonBlockImageInfo
-	ObjectAttr
-	ObjectAttrDic
-	ObjectAttrInfo
-	Tile
-	TileDic
-	TileInfo
-	SetDungeon
-	TilePaletteImageSet
-	TilePalette
-	SetBlockImagePalette
-	AUser
-	AUserDic
-	UserInfo
-	AItem
-	AItemDic
-	ItemInfo
-	ALocation
-	ALocationDic
-	LocationInfo
-	Signal
-	SignalQueue
-	IslandGround
-	IslandGroundInfo
-	AMessage
-	AMessageDic
-	MessageInfo
-	APickuped
-	PickupedInfo
-	Ashiatolog
-	ItemArticle
-	ItemArticleDic
-	ItemArticleInfo
-	MonsterDic
-	MonsterInfo
-	RDReadItemDic
-	RDReadItemInfo
-	ARealMonster
-	RealMonsterInfo
-	ARealMonsterLocation
-	RealMonsterLocationInfo
-	AKeywordItem
-	AKeyword
-	KeywordUserInfo
-*/
 package godaiquest
 
 import proto "code.google.com/p/goprotobuf/proto"
@@ -72,13 +14,19 @@ var _ = &json.SyntaxError{}
 var _ = math.Inf
 
 type AddUser struct {
-	MailAddress      *string `protobuf:"bytes,1,opt,name=mail_address" json:"mail_address,omitempty"`
-	UserName         *string `protobuf:"bytes,2,opt,name=user_name" json:"user_name,omitempty"`
-	Password         *string `protobuf:"bytes,3,opt,name=password" json:"password,omitempty"`
-	UserFolder       *string `protobuf:"bytes,4,opt,name=user_folder" json:"user_folder,omitempty"`
-	ComputerName     *string `protobuf:"bytes,5,opt,name=computer_name" json:"computer_name,omitempty"`
-	UserImage        []byte  `protobuf:"bytes,6,opt,name=user_image" json:"user_image,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
+	// メールアドレス
+	MailAddress *string `protobuf:"bytes,1,opt,name=mail_address" json:"mail_address,omitempty"`
+	// ユーザ名
+	UserName *string `protobuf:"bytes,2,opt,name=user_name" json:"user_name,omitempty"`
+	// パスワード
+	Password *string `protobuf:"bytes,3,opt,name=password" json:"password,omitempty"`
+	// ユーザフォルダ
+	UserFolder *string `protobuf:"bytes,4,opt,name=user_folder" json:"user_folder,omitempty"`
+	// コンピュータ名
+	ComputerName *string `protobuf:"bytes,5,opt,name=computer_name" json:"computer_name,omitempty"`
+	// イメージデータ
+	UserImage        []byte `protobuf:"bytes,6,opt,name=user_image" json:"user_image,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *AddUser) Reset()         { *m = AddUser{} }
@@ -128,8 +76,11 @@ func (m *AddUser) GetUserImage() []byte {
 }
 
 type Login struct {
-	MailAddress      *string `protobuf:"bytes,1,opt,name=mail_address" json:"mail_address,omitempty"`
-	Password         *string `protobuf:"bytes,2,opt,name=password" json:"password,omitempty"`
+	// メールアドレス
+	MailAddress *string `protobuf:"bytes,1,opt,name=mail_address" json:"mail_address,omitempty"`
+	// パスワード
+	Password *string `protobuf:"bytes,2,opt,name=password" json:"password,omitempty"`
+	// クライアントバージョン
 	ClientVersion    *uint32 `protobuf:"fixed32,3,opt,name=client_version" json:"client_version,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
 }
@@ -160,7 +111,9 @@ func (m *Login) GetClientVersion() uint32 {
 }
 
 type GetDungeon struct {
-	Id               *int32 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
+	// ダンジョンID
+	Id *int32 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
+	// ダンジョン番号
 	DungeonNumber    *int32 `protobuf:"varint,2,opt,name=dungeon_number" json:"dungeon_number,omitempty"`
 	XXX_unrecognized []byte `json:"-"`
 }
@@ -184,9 +137,13 @@ func (m *GetDungeon) GetDungeonNumber() int32 {
 }
 
 type DungeonInfo struct {
-	Dungeon          []byte `protobuf:"bytes,1,opt,name=dungeon" json:"dungeon,omitempty"`
-	SizeX            *int32 `protobuf:"varint,2,opt,name=size_x" json:"size_x,omitempty"`
-	SizeY            *int32 `protobuf:"varint,3,opt,name=size_y" json:"size_y,omitempty"`
+	// ダンジョンの情報
+	Dungeon []byte `protobuf:"bytes,1,opt,name=dungeon" json:"dungeon,omitempty"`
+	// サイズX
+	SizeX *int32 `protobuf:"varint,2,opt,name=size_x" json:"size_x,omitempty"`
+	// サイズY
+	SizeY *int32 `protobuf:"varint,3,opt,name=size_y" json:"size_y,omitempty"`
+	// ダンジョン番号
 	DungeonNumber    *int32 `protobuf:"varint,4,opt,name=dungeon_number" json:"dungeon_number,omitempty"`
 	XXX_unrecognized []byte `json:"-"`
 }
@@ -496,9 +453,13 @@ func (m *TileInfo) GetTileDic() []*TileDic {
 }
 
 type SetDungeon struct {
-	UserId           *int32                 `protobuf:"varint,1,opt,name=user_id" json:"user_id,omitempty"`
-	DungeonNumber    *int32                 `protobuf:"varint,2,opt,name=dungeon_number" json:"dungeon_number,omitempty"`
-	DungeonInfo      *DungeonInfo           `protobuf:"bytes,3,opt,name=dungeon_info" json:"dungeon_info,omitempty"`
+	// ユーザID
+	UserId *int32 `protobuf:"varint,1,opt,name=user_id" json:"user_id,omitempty"`
+	// ダンジョン番号
+	DungeonNumber *int32 `protobuf:"varint,2,opt,name=dungeon_number" json:"dungeon_number,omitempty"`
+	// ダンジョンの情報
+	DungeonInfo *DungeonInfo `protobuf:"bytes,3,opt,name=dungeon_info" json:"dungeon_info,omitempty"`
+	// イメージ情報
 	Images           *DungeonBlockImageInfo `protobuf:"bytes,4,opt,name=images" json:"images,omitempty"`
 	ObjectInfo       *ObjectAttrInfo        `protobuf:"bytes,5,opt,name=object_info" json:"object_info,omitempty"`
 	TileInfo         *TileInfo              `protobuf:"bytes,6,opt,name=tile_info" json:"tile_info,omitempty"`
@@ -779,6 +740,86 @@ func (*ItemInfo) ProtoMessage()    {}
 func (m *ItemInfo) GetAitemDic() []*AItemDic {
 	if m != nil {
 		return m.AitemDic
+	}
+	return nil
+}
+
+type AItem2 struct {
+	ItemId           *int32  `protobuf:"varint,1,opt,name=item_id" json:"item_id,omitempty"`
+	ItemImageId      *int32  `protobuf:"varint,2,opt,name=item_image_id" json:"item_image_id,omitempty"`
+	HeaderString     *string `protobuf:"bytes,3,opt,name=header_string" json:"header_string,omitempty"`
+	HeaderImage      []byte  `protobuf:"bytes,4,opt,name=header_image" json:"header_image,omitempty"`
+	BNew             *bool   `protobuf:"varint,5,opt,name=bNew" json:"bNew,omitempty"`
+	Created          *int64  `protobuf:"fixed64,6,opt,name=created" json:"created,omitempty"`
+	LastModified     *int64  `protobuf:"fixed64,7,opt,name=last_modified" json:"last_modified,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
+}
+
+func (m *AItem2) Reset()         { *m = AItem2{} }
+func (m *AItem2) String() string { return proto.CompactTextString(m) }
+func (*AItem2) ProtoMessage()    {}
+
+func (m *AItem2) GetItemId() int32 {
+	if m != nil && m.ItemId != nil {
+		return *m.ItemId
+	}
+	return 0
+}
+
+func (m *AItem2) GetItemImageId() int32 {
+	if m != nil && m.ItemImageId != nil {
+		return *m.ItemImageId
+	}
+	return 0
+}
+
+func (m *AItem2) GetHeaderString() string {
+	if m != nil && m.HeaderString != nil {
+		return *m.HeaderString
+	}
+	return ""
+}
+
+func (m *AItem2) GetHeaderImage() []byte {
+	if m != nil {
+		return m.HeaderImage
+	}
+	return nil
+}
+
+func (m *AItem2) GetBNew() bool {
+	if m != nil && m.BNew != nil {
+		return *m.BNew
+	}
+	return false
+}
+
+func (m *AItem2) GetCreated() int64 {
+	if m != nil && m.Created != nil {
+		return *m.Created
+	}
+	return 0
+}
+
+func (m *AItem2) GetLastModified() int64 {
+	if m != nil && m.LastModified != nil {
+		return *m.LastModified
+	}
+	return 0
+}
+
+type ItemInfo2 struct {
+	ItemList         []*AItem2 `protobuf:"bytes,1,rep,name=item_list" json:"item_list,omitempty"`
+	XXX_unrecognized []byte    `json:"-"`
+}
+
+func (m *ItemInfo2) Reset()         { *m = ItemInfo2{} }
+func (m *ItemInfo2) String() string { return proto.CompactTextString(m) }
+func (*ItemInfo2) ProtoMessage()    {}
+
+func (m *ItemInfo2) GetItemList() []*AItem2 {
+	if m != nil {
+		return m.ItemList
 	}
 	return nil
 }
@@ -1303,6 +1344,7 @@ func (m *RDReadItemInfo) GetReadItemDic() []*RDReadItemDic {
 	return nil
 }
 
+// 外部モンスター情報
 type ARealMonster struct {
 	MonsterId        *int32  `protobuf:"varint,1,opt,name=monster_id" json:"monster_id,omitempty"`
 	MonsterName      *string `protobuf:"bytes,2,opt,name=monster_name" json:"monster_name,omitempty"`
@@ -1375,6 +1417,7 @@ func (m *RealMonsterInfo) GetRealMonster() []*ARealMonster {
 	return nil
 }
 
+// 外部モンスターの位置情報
 type ARealMonsterLocation struct {
 	MonsterId        *int32 `protobuf:"varint,1,opt,name=monster_id" json:"monster_id,omitempty"`
 	MonsterIx        *int32 `protobuf:"varint,2,opt,name=monster_ix" json:"monster_ix,omitempty"`
@@ -1439,6 +1482,7 @@ func (m *RealMonsterLocationInfo) GetLocationList() []*ARealMonsterLocation {
 	return nil
 }
 
+// キーワードに関連付けられたアイテム群
 type AKeywordItem struct {
 	ItemPriority     *int32 `protobuf:"varint,1,opt,name=item_priority" json:"item_priority,omitempty"`
 	ItemId           *int32 `protobuf:"varint,2,opt,name=item_id" json:"item_id,omitempty"`
@@ -1463,6 +1507,7 @@ func (m *AKeywordItem) GetItemId() int32 {
 	return 0
 }
 
+// キーワードとそれに関連付けられたアイテム群
 type AKeyword struct {
 	KeywordId        *int32          `protobuf:"varint,1,opt,name=keyword_id" json:"keyword_id,omitempty"`
 	Keyword          *string         `protobuf:"bytes,2,opt,name=keyword" json:"keyword,omitempty"`
@@ -1503,6 +1548,7 @@ func (m *AKeyword) GetKeywordItemSet() []*AKeywordItem {
 	return nil
 }
 
+// キーワードとアイテムの関連情報
 type KeywordUserInfo struct {
 	UserId           *int32      `protobuf:"varint,1,opt,name=user_id" json:"user_id,omitempty"`
 	KeywordSet       []*AKeyword `protobuf:"bytes,2,rep,name=keyword_set" json:"keyword_set,omitempty"`
@@ -1523,6 +1569,55 @@ func (m *KeywordUserInfo) GetUserId() int32 {
 func (m *KeywordUserInfo) GetKeywordSet() []*AKeyword {
 	if m != nil {
 		return m.KeywordSet
+	}
+	return nil
+}
+
+// アイテム時間
+type AItemTime struct {
+	ItemId           *int32 `protobuf:"varint,1,opt,name=item_id" json:"item_id,omitempty"`
+	Created          *int64 `protobuf:"fixed64,2,opt,name=created" json:"created,omitempty"`
+	LastModified     *int64 `protobuf:"fixed64,3,opt,name=last_modified" json:"last_modified,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *AItemTime) Reset()         { *m = AItemTime{} }
+func (m *AItemTime) String() string { return proto.CompactTextString(m) }
+func (*AItemTime) ProtoMessage()    {}
+
+func (m *AItemTime) GetItemId() int32 {
+	if m != nil && m.ItemId != nil {
+		return *m.ItemId
+	}
+	return 0
+}
+
+func (m *AItemTime) GetCreated() int64 {
+	if m != nil && m.Created != nil {
+		return *m.Created
+	}
+	return 0
+}
+
+func (m *AItemTime) GetLastModified() int64 {
+	if m != nil && m.LastModified != nil {
+		return *m.LastModified
+	}
+	return 0
+}
+
+type ItemTimeInfo struct {
+	ItemTimeList     []*AItemTime `protobuf:"bytes,1,rep,name=item_time_list" json:"item_time_list,omitempty"`
+	XXX_unrecognized []byte       `json:"-"`
+}
+
+func (m *ItemTimeInfo) Reset()         { *m = ItemTimeInfo{} }
+func (m *ItemTimeInfo) String() string { return proto.CompactTextString(m) }
+func (*ItemTimeInfo) ProtoMessage()    {}
+
+func (m *ItemTimeInfo) GetItemTimeList() []*AItemTime {
+	if m != nil {
+		return m.ItemTimeList
 	}
 	return nil
 }

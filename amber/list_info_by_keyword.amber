@@ -46,14 +46,16 @@ block content
                 input[type="hidden"][name="keyword"][value=$keyword]
                 input[type="hidden"][name="view_id"][value=$view_id]
                 input[type="hidden"][name="info_id"][value=$info_id]
-          br
-          br
+          div 作成
+          div #{$aitem.Created}
+          div 最終更新
+          div #{$aitem.LastModified}
           script
             </script>
             <li>
             <A href="read_info?view_id=#{$view_id}&info_id=#{$info_id}" target="_blank">別窓で読む</A>
             </li>
-      div.box.text[class="col-xs-10"] #{$aitem.HeaderString}
+      div.box.text[class="col-xs-9"] #{$aitem.HeaderString}
       br
       br
   br

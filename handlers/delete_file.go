@@ -62,9 +62,8 @@ func DeleteFileHandler(w http.ResponseWriter, r *http.Request) {
 
 	// 宛先が自分のものかをチェックする
 	find := false
-	for _, aitemdic := range itemInfo.GetAitemDic() {
+	for _, aitem := range itemInfo.GetItemList() {
 
-		aitem := aitemdic.GetAitem()
 		itemId := int(aitem.GetItemId())
 		if itemId == infoId {
 			find = true
