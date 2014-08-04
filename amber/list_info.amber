@@ -33,6 +33,7 @@ block content
             a[class="btn btn-default btn-xs"][href="list_info?view_id="+view_id+"&index="+(index+pagesize)] >>次のページ
     
   $view_id_tmp = view_id
+  div[class="help-block"] 別窓で読むを選択すると編集もできます
   each $i, $aitem in itemlist
     $info_id_tmp = $aitem.ItemId
     $info_id_tmp2 = $aitem.ItemId

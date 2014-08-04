@@ -33,6 +33,7 @@ block content
             a[class="btn btn-default btn-xs"][href="list_info_by_keyword?keyword="+$keyword+"&view_id="+view_id+"&index="+(index+pagesize)] >>次のページ
       div.box2
 
+  div[class="help-block"] 別窓で読むを選択すると編集もできます
   $can_manip = can_manip
   each $i, $aitem in itemlist
     $info_id = $aitem.ItemId

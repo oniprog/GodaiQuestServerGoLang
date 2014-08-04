@@ -18,12 +18,12 @@ block content
   table[class="table table-hover"]
     $keyword = keyword
     tr
-      th[style="width:60px"] 未読情報
+      th[style="width:80px"] 未読情報
     each $auser in UserInfo
       $id = $auser.UserId
       $keyword = $auser.Keyword
       tr
-        td[style="width:60px"]
+        td[style="width:80px"]
           A[href="list_info?view_id="+$auser.UserId]
           script
             </script>

@@ -29,6 +29,7 @@ block content
           if $after
             a[class="btn btn-default btn-xs"][href="list_info_all?view_id="+view_id+"&index="+(index+pagesize)] >>次のページ
 
+  div[class="help-block"] 別窓で読むを選択すると編集もできます
   $view_id_tmp = view_id
   each $i, $aitem in itemlist
     $info_id_tmp = $aitem.ItemId
